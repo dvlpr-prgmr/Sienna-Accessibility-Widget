@@ -1,12 +1,22 @@
 import monochromeIcon from "../../icons/monochromeIcon.svg"
 import lowSaturationIcon from "../../icons/lowSaturationIcon.svg"
 import highSaturationIcon from "../../icons/highSaturationIcon.svg"
-import lightContrastIcon from "../../icons/lightContrastIcon.svg"
-import darkContrastIcon from "../../icons/darkContrastIcon.svg"
 import highContrastIcon from "../../icons/highContrastIcon.svg"
 import invertColorsIcon from "../../icons/invertColorsIcon.svg"
+import imageDesaturationIcon from "../../icons/imageDesaturationIcon.svg"
 
 export default [
+    {
+        label: 'Contrast',
+        key: 'contrast-cycle',
+        icon: highContrastIcon,
+        steps: ['Dark Contrast', 'Light Contrast', 'High Contrast'],
+    },
+    {
+        label: 'Invert Colors',
+        key: 'invert-colors',
+        icon: invertColorsIcon,
+    },
     {
         label: 'Monochrome',
         key: 'monochrome',
@@ -23,23 +33,14 @@ export default [
         icon: highSaturationIcon,
     },
     {
-        label: 'High Contrast',
-        key: 'high-contrast',
-        icon: highContrastIcon,
+        label: 'Monochrome',
+        key: 'monochrome',
+        icon: monochromeIcon,
     },
     {
-        label: 'Invert Colors',
-        key: 'invert-colors',
-        icon: invertColorsIcon,
+        label: 'Image Desaturation',
+        key: 'image-desaturation',
+        icon: imageDesaturationIcon,
     },
-    {
-        label: 'Light Contrast',
-        key: 'light-contrast',
-        icon: lightContrastIcon,
-    },
-    {
-        label: 'Dark Contrast',
-        key: 'dark-contrast',
-        icon: darkContrastIcon,
-    },
+    // Legacy direct contrast buttons removed in favour of cycle button.
 ];

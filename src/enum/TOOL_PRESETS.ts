@@ -7,6 +7,16 @@ import voiceNavigationIcon from "../icons/voiceNavigationIcon.svg"
 
 export default [
     {
+        label: 'Screen Reader',
+        key: 'screen-reader',
+        icon: screenReaderIcon,
+    },
+    {
+        label: 'Voice Navigation',
+        key: 'voice-navigation',
+        icon: voiceNavigationIcon,
+    },
+    {
         label: 'Big Cursor',
         key: 'big-cursor',
         icon: bigCursorIcon,
@@ -20,15 +30,5 @@ export default [
         label: 'Reading Guide',
         key: 'readable-guide',
         icon: readingGuideIcon,
-    },
-    {
-        label: 'Screen Reader',
-        key: 'screen-reader',
-        icon: screenReaderIcon,
-    },
-    {
-        label: 'Voice Navigation',
-        key: 'voice-navigation',
-        icon: voiceNavigationIcon,
     },
 ]

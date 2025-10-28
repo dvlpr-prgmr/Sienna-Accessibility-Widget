@@ -30,6 +30,11 @@ export default function reset() {
     const $positionCard = document.querySelector<HTMLElement>(".asw-position-card");
     const $settingsToggle = document.querySelector<HTMLButtonElement>(".asw-settings-toggle");
     const $settingsCard = document.querySelector<HTMLElement>(".asw-settings-card");
+    const $customPaletteToggle = document.querySelector<HTMLButtonElement>(".asw-custom-palette-toggle");
+    const $customPaletteCard = document.querySelector<HTMLElement>(".asw-custom-palette-card");
+    const $customTextColor = document.querySelector<HTMLInputElement>(".asw-custom-palette-text");
+    const $customBackgroundColor = document.querySelector<HTMLInputElement>(".asw-custom-palette-background");
+    const $customPaletteCheckbox = document.querySelector<HTMLInputElement>(".asw-custom-palette-checkbox");
 
     if ($positionToggle && $positionCard) {
         $positionToggle.setAttribute("aria-expanded", "false");
@@ -39,6 +44,23 @@ export default function reset() {
     if ($settingsToggle && $settingsCard) {
         $settingsToggle.setAttribute("aria-expanded", "false");
         $settingsCard.classList.remove("asw-settings-open");
+    }
+
+    if ($customPaletteToggle && $customPaletteCard) {
+        $customPaletteToggle.setAttribute("aria-expanded", "false");
+        $customPaletteCard.classList.remove("asw-custom-palette-open");
+    }
+
+    if ($customTextColor) {
+        $customTextColor.value = "#000000";
+    }
+
+    if ($customBackgroundColor) {
+        $customBackgroundColor.value = "#ffffff";
+    }
+
+    if ($customPaletteCheckbox) {
+        $customPaletteCheckbox.checked = false;
     }
 
     runAccessibility();

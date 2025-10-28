@@ -32,6 +32,13 @@ export const FILTERS: IFilters = {
             'filter': 'invert(100%)'
         }
     },
+    'image-desaturation': {
+        selector: 'html.aws-filter',
+        childrenSelector: [' img', ' picture img', ' figure img', ' video'],
+        styles: {
+            'filter': 'grayscale(100%)'
+        }
+    },
     'high-saturation': {
         styles: {
             'filter': 'saturate(200%)'

@@ -20,6 +20,8 @@ import { userSettings, saveUserSettings } from "@/globals/userSettings";
 import { changeLanguage } from "@/i18n/changeLanguage";
 import toggleMenu from "./toggleMenu";
 import { $widget, applyButtonPosition } from "../widget/widget";
+import { DEFAULT_CUSTOM_PALETTE_STATE, ICustomPaletteState } from "@/tools/customPalette";
+import { t } from "@/i18n/translate";
 
 export default function renderMenu() {
     const $container: HTMLElement = document.createElement("div");
@@ -33,10 +35,15 @@ export default function renderMenu() {
 
     $menu.querySelector(".content").innerHTML = renderButtons(ContentButtons);
     $menu.querySelector(".tools").innerHTML = renderButtons(ToolButtons, 'asw-tools');
-    $menu.querySelector(".contrast").innerHTML = renderButtons(FilterButtons, 'asw-filter');
+
+    const $contrastGrid = $menu.querySelector(".contrast");
+    $contrastGrid.innerHTML = renderButtons(FilterButtons, 'asw-filter');
+
+    const $contrastButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-contrast-option"));
 
     // *** States UI Rendering ***
     const states = userSettings?.states;
+    const filterButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>('.asw-filter'));
 
     const fontSize = Number(states?.fontSize) || 1;
     if (fontSize != 1) {
@@ -47,13 +54,73 @@ export default function renderMenu() {
         const buttons = Array.from($menu.querySelectorAll('.asw-btn'));
 
         Object.entries(states).forEach(([key, value]) => {
-            if (value && key !== "fontSize") {
-                const selector = key === "contrast" ? states[key] : key;
-                const btn = buttons.find(b => b.dataset.key === selector);
-                if (btn) btn.classList.add("asw-selected");
+            if (!value || key === "fontSize") {
+                return;
+            }
+
+            if (typeof value === "object" && key !== "contrast") {
+                return;
+            }
+
+            const selector = key === "contrast" ? states[key] : key;
+            const btn = buttons.find(b => b.dataset.key === selector);
+            if (btn) btn.classList.add("asw-selected");
+            if (key === "contrast" && typeof selector === "string") {
+                filterButtons.forEach(b => {
+                    if (b.dataset.key !== selector) {
+                        b.classList.remove("asw-selected");
+                    }
+                });
             }
         });
     }
+
+    const contrastCycleOrder = ["contrast", "dark-contrast", "light-contrast", "high-contrast"];
+    const contrastLabelMap: Record<string, string> = {
+        "dark-contrast": "Dark Contrast",
+        "light-contrast": "Light Contrast",
+        "high-contrast": "High Contrast"
+    };
+
+    const $contrastCycleButton = $menu.querySelector<HTMLButtonElement>('.asw-filter[data-key="contrast-cycle"]');
+    const $contrastCycleLabel = $contrastCycleButton?.querySelector<HTMLSpanElement>('.asw-translate');
+
+    const updateContrastCycleButton = (value: string | false | "contrast") => {
+        if (!$contrastCycleButton || !$contrastCycleLabel) {
+            return;
+        }
+
+        const isActive = typeof value === "string" && value !== "contrast" && contrastCycleOrder.includes(value);
+        const translationKey = isActive ? contrastLabelMap[value as keyof typeof contrastLabelMap] : "Contrast";
+
+        $contrastCycleButton.classList.toggle("asw-selected", isActive);
+        $contrastCycleButton.setAttribute("aria-pressed", String(isActive));
+        $contrastCycleLabel.setAttribute("data-translate", translationKey);
+        $contrastCycleLabel.textContent = t(translationKey);
+
+        const barsWrapper = $contrastCycleButton.querySelector<HTMLDivElement>(".asw-contrast-bars");
+        const barElements = Array.from($contrastCycleButton.querySelectorAll<HTMLSpanElement>(".asw-contrast-bar"));
+
+        barElements.forEach((bar) => bar.classList.remove("is-active"));
+
+        if (isActive) {
+            barsWrapper?.classList.add("is-visible");
+            const activeStepIndex = Math.max(0, contrastCycleOrder.indexOf(value as string) - 1);
+            barElements.forEach((bar, index) => {
+                bar.classList.toggle("is-active", index <= activeStepIndex);
+            });
+        } else {
+            barsWrapper?.classList.remove("is-visible");
+        }
+    };
+
+    const getNextContrastValue = (current?: string | null) => {
+        const index = current ? contrastCycleOrder.indexOf(current) : -1;
+        const nextIndex = (index + 1) % contrastCycleOrder.length;
+        return contrastCycleOrder[nextIndex];
+    };
+
+    updateContrastCycleButton(typeof states?.contrast === "string" ? states.contrast : false);
 
     // *** Widget Placement ***
     const currentPosition = userSettings.position || pluginConfig.position || "bottom-left";
@@ -62,6 +129,12 @@ export default function renderMenu() {
     const $settingsToggle = $menu.querySelector<HTMLButtonElement>(".asw-settings-toggle");
     const $settingsCard = $menu.querySelector<HTMLElement>(".asw-settings-card");
     const $settingsIcon = $menu.querySelector<HTMLElement>(".asw-settings-icon");
+    const $customPaletteCard = $menu.querySelector<HTMLElement>(".asw-custom-palette-card");
+    const $customPaletteToggle = $menu.querySelector<HTMLButtonElement>(".asw-custom-palette-toggle");
+    const $customTextColor = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-text");
+    const $customBackgroundColor = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-background");
+    const $customPaletteCheckbox = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-checkbox");
+    const $customPaletteReset = $menu.querySelector<HTMLButtonElement>(".asw-custom-palette-reset");
 
     if ($settingsIcon) {
         $settingsIcon.innerHTML = widgetSettingsIcon;
@@ -83,6 +156,103 @@ export default function renderMenu() {
             setSettingsVisibility(expanded);
         });
     }
+
+    const hasSavedPalette = Boolean(states && typeof states['custom-palette'] === "object" && states['custom-palette'] !== null);
+    let paletteState: ICustomPaletteState = { ...DEFAULT_CUSTOM_PALETTE_STATE };
+    if (hasSavedPalette && states) {
+        paletteState = { ...paletteState, ...(states['custom-palette'] as ICustomPaletteState) };
+        userSettings.states['custom-palette'] = paletteState;
+    }
+
+    const setCustomPaletteVisibility = (expanded: boolean) => {
+        if (!$customPaletteCard || !$customPaletteToggle) {
+            return;
+        }
+
+        $customPaletteToggle.setAttribute("aria-expanded", String(expanded));
+        $customPaletteCard.classList.toggle("asw-custom-palette-open", expanded);
+    };
+
+    if ($customPaletteToggle) {
+        setCustomPaletteVisibility(false);
+        $customPaletteToggle.addEventListener("click", () => {
+            const expanded = $customPaletteToggle.getAttribute("aria-expanded") !== "true";
+            if (expanded) {
+                setSettingsVisibility(true);
+            }
+            setCustomPaletteVisibility(expanded);
+        });
+    }
+
+    if ($customTextColor) {
+        $customTextColor.value = paletteState.textColor;
+    }
+
+    if ($customBackgroundColor) {
+        $customBackgroundColor.value = paletteState.backgroundColor;
+    }
+
+    if ($customPaletteCheckbox) {
+        $customPaletteCheckbox.checked = Boolean(paletteState.enabled);
+    }
+
+    if (paletteState.enabled) {
+        setSettingsVisibility(true);
+        setCustomPaletteVisibility(true);
+    }
+
+    const persistPaletteState = () => {
+        const shouldRemove = !paletteState.enabled &&
+            paletteState.textColor === DEFAULT_CUSTOM_PALETTE_STATE.textColor &&
+            paletteState.backgroundColor === DEFAULT_CUSTOM_PALETTE_STATE.backgroundColor;
+
+        if (shouldRemove) {
+            delete userSettings.states['custom-palette'];
+        } else {
+            userSettings.states['custom-palette'] = paletteState;
+        }
+    };
+
+    const updateCustomPalette = (partial: Partial<typeof paletteState>, apply = true) => {
+        paletteState = { ...paletteState, ...partial };
+        persistPaletteState();
+        if (apply) {
+            renderTools();
+        }
+        saveUserSettings();
+    };
+
+    $customTextColor?.addEventListener("input", (event) => {
+        const value = (event.target as HTMLInputElement).value || DEFAULT_CUSTOM_PALETTE_STATE.textColor;
+        updateCustomPalette({ textColor: value }, Boolean(paletteState.enabled));
+    });
+
+    $customBackgroundColor?.addEventListener("input", (event) => {
+        const value = (event.target as HTMLInputElement).value || DEFAULT_CUSTOM_PALETTE_STATE.backgroundColor;
+        updateCustomPalette({ backgroundColor: value }, Boolean(paletteState.enabled));
+    });
+
+    $customPaletteCheckbox?.addEventListener("change", (event) => {
+        const enabled = (event.target as HTMLInputElement).checked;
+        updateCustomPalette({ enabled }, true);
+    });
+
+    $customPaletteReset?.addEventListener("click", () => {
+        const defaults = { ...DEFAULT_CUSTOM_PALETTE_STATE };
+        if ($customTextColor) {
+            $customTextColor.value = defaults.textColor;
+        }
+        if ($customBackgroundColor) {
+            $customBackgroundColor.value = defaults.backgroundColor;
+        }
+        if ($customPaletteCheckbox) {
+            $customPaletteCheckbox.checked = false;
+        }
+        paletteState = defaults;
+        persistPaletteState();
+        renderTools();
+        saveUserSettings();
+    });
 
     const setPositionGridVisibility = (expanded: boolean) => {
         if (!$positionCard || !$positionToggle) {
@@ -205,29 +375,41 @@ export default function renderMenu() {
         el.addEventListener("click", () => {
             const key = el.dataset.key;
             const isSelected = !el.classList.contains("asw-selected");
-            
-            // --- Contrast ---
+
             if (el.classList.contains("asw-filter")) {
-                $menu.querySelectorAll(".asw-filter").forEach((el: HTMLElement) =>
-                    el.classList.remove("asw-selected")
-                );
+                if (key === "contrast-cycle") {
+                    filterButtons.forEach(button => {
+                        if (button !== el) {
+                            button.classList.remove("asw-selected");
+                        }
+                    });
+
+                    const current = typeof userSettings.states.contrast === "string" ? userSettings.states.contrast : "contrast";
+                    const nextValue = getNextContrastValue(current);
+
+                    userSettings.states.contrast = nextValue === "contrast" ? false : nextValue;
+                    updateContrastCycleButton(userSettings.states.contrast || "contrast");
+                    enableContrast(userSettings.states.contrast);
+                    saveUserSettings();
+                    return;
+                }
+
+                filterButtons.forEach((filterBtn) => filterBtn.classList.remove("asw-selected"));
 
                 if (isSelected) {
                     el.classList.add("asw-selected");
                 }
 
                 userSettings.states.contrast = isSelected ? key : false;
+                updateContrastCycleButton(false);
                 enableContrast(userSettings.states.contrast);
-
                 saveUserSettings();
-
                 return;
             }
-            
+
             el.classList.toggle("asw-selected", isSelected);
             userSettings.states[key] = isSelected;
             renderTools();
-
             saveUserSettings();
         });
     });

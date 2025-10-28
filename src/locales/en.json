@@ -14,6 +14,7 @@
     "High Saturation": "High Saturation",
     "Low Saturation": "Low Saturation",
     "Monochrome": "Monochrome",
+    "Contrast": "Contrast",
     "Invert Colors": "Invert Colors",
     "Tools": "Tools",
     "Reading Guide": "Reading Guide",
@@ -38,5 +39,11 @@
     "Bottom Center": "Bottom Center",
     "Bottom Right": "Bottom Right",
     "Screen Reader": "Screen Reader",
-    "Voice Navigation": "Voice Navigation"
+    "Voice Navigation": "Voice Navigation",
+    "Custom Palette": "Custom Palette",
+    "Text Color": "Text Color",
+    "Background Color": "Background Color",
+    "Enable Custom Palette": "Enable Custom Palette",
+    "Reset Palette": "Reset Palette",
+    "Image Desaturation": "Image Desaturation"
 }
