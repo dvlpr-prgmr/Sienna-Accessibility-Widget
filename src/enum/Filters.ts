@@ -27,6 +27,11 @@ export const FILTERS: IFilters = {
             'filter': 'contrast(125%)'
         }
     },
+    'invert-colors': {
+        styles: {
+            'filter': 'invert(100%)'
+        }
+    },
     'high-saturation': {
         styles: {
             'filter': 'saturate(200%)'

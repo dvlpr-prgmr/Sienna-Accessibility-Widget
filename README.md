@@ -34,7 +34,9 @@ Sienna: accessibility widget for websites. easy to install, just copy and paste 
 
 ## 📌 TODO
 - Accessibility Profiles
-- Theme Color
+- Widget Settings
+  - Widget Size (Default, Medium, Small)
+  - Theme Color
 
 ## 🤝 Contributing
 We welcome contributions from anyone who is interested in improving this. If you would like to contribute, please fork the repository and submit a pull request. ❤️

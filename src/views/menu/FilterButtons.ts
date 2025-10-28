@@ -4,6 +4,7 @@ import highSaturationIcon from "../../icons/highSaturationIcon.svg"
 import lightContrastIcon from "../../icons/lightContrastIcon.svg"
 import darkContrastIcon from "../../icons/darkContrastIcon.svg"
 import highContrastIcon from "../../icons/highContrastIcon.svg"
+import invertColorsIcon from "../../icons/invertColorsIcon.svg"
 
 export default [
     {
@@ -25,6 +26,11 @@ export default [
         label: 'High Contrast',
         key: 'high-contrast',
         icon: highContrastIcon,
+    },
+    {
+        label: 'Invert Colors',
+        key: 'invert-colors',
+        icon: invertColorsIcon,
     },
     {
         label: 'Light Contrast',
