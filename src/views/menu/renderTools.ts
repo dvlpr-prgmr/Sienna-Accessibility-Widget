@@ -11,9 +11,11 @@ import highlightLinks from "@/tools/highlightLinks";
 import adjustLetterSpacing from "@/tools/adjustLetterSpacing";
 import adjustLineHeight from "@/tools/adjustLineHeight";
 import adjustFontWeight from "@/tools/adjustFontWeight";
+import screenReader from "@/tools/screenReader";
+import voiceNavigation from "@/tools/voiceNavigation";
 
 export default function renderTools() {
-    const states = userSettings?.states;
+    const states = userSettings?.states || {};
 
     highlightTitle(states['highlight-title']);
     highlightLinks(states['highlight-links']);
@@ -27,4 +29,7 @@ export default function renderTools() {
     readingGuide(states['readable-guide']);
     stopAnimations(states['stop-animations']);
     bigCursor(states['big-cursor']);
+
+    screenReader(Boolean(states['screen-reader']));
+    voiceNavigation(Boolean(states['voice-navigation']));
 }

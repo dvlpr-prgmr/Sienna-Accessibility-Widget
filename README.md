@@ -13,6 +13,13 @@ Sienna: accessibility widget for websites. easy to install, just copy and paste 
 
 [Install the plugin quickly with just a copy and paste](https://accessibility-widget.pages.dev/#setup)
 
+## 🧪 Local Testing
+- Install dependencies: `npm install`
+- Build the widget bundle: `npm run build`
+- Start the demo server (serves `demo/index.html` plus the `dist` bundle): `npm run demo`
+- For hot reload, run `npm run demo:serve` (watches the build and restarts the server automatically).
+- Open `http://127.0.0.1:4173/` in Chrome/Edge to exercise screen reader, voice navigation, widget positioning, and custom language registration.
+
 ## 🚀 Features
 
 ✅ **Multilingual Support**: Supports multiple languages to ensure a seamless user experience for all users.
@@ -26,13 +33,8 @@ Sienna: accessibility widget for websites. easy to install, just copy and paste 
 ✅ **Reading Guide, Stop Animations, and Big Cursor**: Helpful tools like a reading guide, the ability to stop animations, and a big cursor to make browsing your website easier for users with visual impairments.
 
 ## 📌 TODO
-
 - Accessibility Profiles
-- Screen Reader
-- Voice Navigation
-- Position of Button
-- Inject Icon in code
-- Support More Languages
+- Theme Color
 
 ## 🤝 Contributing
 We welcome contributions from anyone who is interested in improving this. If you would like to contribute, please fork the repository and submit a pull request. ❤️

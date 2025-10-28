@@ -3,6 +3,7 @@ import { getStorageData, saveStorageData } from "@/storage";
 export const userSettings = {
   lang: undefined,
   position: undefined,
+  offset: undefined,
   states: {}
 };
 

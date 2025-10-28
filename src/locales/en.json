@@ -25,5 +25,17 @@
     "Font Weight": "Font Weight",
     "Dyslexia Font": "Dyslexia Font",
     "Language": "Language",
-    "Open Accessibility Menu": "Open Accessibility Menu"
+    "Open Accessibility Menu": "Open Accessibility Menu",
+    "Widget Settings": "Widget Settings",
+    "Widget Position": "Widget Position",
+    "Top Left": "Top Left",
+    "Top Center": "Top Center",
+    "Top Right": "Top Right",
+    "Center Left": "Center Left",
+    "Center Right": "Center Right",
+    "Bottom Left": "Bottom Left",
+    "Bottom Center": "Bottom Center",
+    "Bottom Right": "Bottom Right",
+    "Screen Reader": "Screen Reader",
+    "Voice Navigation": "Voice Navigation"
 }

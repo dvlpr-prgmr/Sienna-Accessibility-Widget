@@ -1,90 +1,131 @@
-const elementNodeNames: string[] = ["B", "STRONG", "I", "U", "EM", "MARK", "SUB", "SUP", "INS", "PRE", "ABBR"];
+import { pluginConfig } from "@/globals/pluginConfig";
+import { userSettings, saveUserSettings } from "@/globals/userSettings";
 
-function getTextFromNode(node) {
+type SelectionHandler = () => void;
 
+let activeUtterance: SpeechSynthesisUtterance | null = null;
+let selectionListener: SelectionHandler | null = null;
+let clickListener: ((event: MouseEvent) => void) | null = null;
+let enabled = false;
+
+const speech = typeof window !== "undefined" ? window.speechSynthesis : null;
+
+function getToggleButton(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('.asw-btn[data-key="screen-reader"]');
 }
 
-function getFullSentence(node: Node): string {
-  return;
-  if (!node) {
-    return '';
-  }
-
-  let sentence = '';
-  let prevNode: Node | null = node.previousSibling;
-  let nextNode: Node | null = node.nextSibling;
-
-  while (prevNode) {
-    if (
-      prevNode.nodeType === Node.TEXT_NODE ||
-      elementNodeNames.includes(prevNode.nodeName)
-    ) {
-      const textContent = prevNode.textContent?.trim().replace(/[ \n]+/g, ' ');
-      if (textContent) {
-        sentence = textContent + ' ' + sentence;
-      }
-    }
-
-    prevNode = prevNode.previousSibling;
-  }
-
-  sentence += node.textContent?.trim().replace(/[ \n]+/g, ' ') || '';
-
-  while (nextNode) {
-    if (
-      nextNode.nodeType === Node.TEXT_NODE ||
-      elementNodeNames.includes(nextNode.nodeName)
-    ) {
-      const textContent = nextNode.textContent?.trim().replace(/[ \n]+/g, ' ');
-      if (textContent) {
-        sentence += ' ' + textContent;
-      }
-    }
-
-    nextNode = nextNode.nextSibling;
-  }
-
-  return sentence.trim();
+function getCurrentLanguage(): string {
+    return userSettings.lang || pluginConfig.lang || "en";
 }
 
-
-function speakText(text) {
-  return;
-  if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-    if (speechSynthesis.speaking) {
-      speechSynthesis.cancel();
+function stopSpeaking() {
+    if (speech) {
+        speech.cancel();
     }
+    activeUtterance = null;
+}
+
+function speak(text: string) {
+    if (!speech || !text) {
+        return;
+    }
+
+    stopSpeaking();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = getCurrentLanguage();
+    activeUtterance = utterance;
+    speech.speak(utterance);
+}
+
+function readSelection() {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
 
     if (text) {
-      speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+        speak(text);
+        return true;
     }
-  } else {
-    console.log('Text-to-speech not supported in this browser.');
-  }
+
+    return false;
 }
 
-
-
-export default function screenReader() {
-  return;
-  /*
-  if (enable) {
-    window.__asw__onClickScreenReader = (event) => {
-      var clickedElement = event.target;
-
-      if (!["BODY", "HEAD", "HTML"].includes(clickedElement.nodeName)) {
-        var selectedText = getFullSentence(clickedElement);
-
-        speakText(selectedText);
-      }
+function handleSelectionChange() {
+    if (!enabled) {
+        return;
     }
 
-    document.addEventListener('click', window.__asw__onClickScreenReader);
-  } else {
-    if (window.__asw__onClickScreenReader) {
-      document.removeEventListener('click', window.__asw__onClickScreenReader);
-      delete window.__asw__onClickScreenReader;
+    // prevent rapid fire when selecting text by dragging
+    window.clearTimeout((handleSelectionChange as unknown as { timeoutId?: number }).timeoutId);
+    (handleSelectionChange as unknown as { timeoutId?: number }).timeoutId = window.setTimeout(() => {
+        readSelection();
+    }, 200);
+}
+
+function handleClick(event: MouseEvent) {
+    if (!enabled) {
+        return;
     }
-  }
-    */
+
+    const target = event.target as HTMLElement | null;
+    const isMenuElement = target?.closest(".asw-menu, .asw-container");
+    if (isMenuElement) {
+        return;
+    }
+
+    if (!readSelection()) {
+        const text = target?.innerText?.trim?.();
+        if (text) {
+            speak(text);
+        }
+    }
+}
+
+function notifyUnsupported() {
+    console.warn("[Sienna] Screen Reader is not supported in this browser.");
+}
+
+export default function screenReader(enable = false) {
+    if (!speech) {
+        notifyUnsupported();
+        enabled = false;
+        if (userSettings.states["screen-reader"]) {
+            userSettings.states["screen-reader"] = false;
+            saveUserSettings();
+        }
+        getToggleButton()?.classList.remove("asw-selected");
+        return;
+    }
+
+    enabled = enable;
+    document.documentElement.classList.toggle("asw-screen-reader", enable);
+
+    if (enable) {
+        if (!selectionListener) {
+            selectionListener = handleSelectionChange;
+            document.addEventListener("selectionchange", selectionListener);
+        }
+
+        if (!clickListener) {
+            clickListener = handleClick;
+            document.addEventListener("mouseup", clickListener);
+            document.addEventListener("keyup", clickListener);
+        }
+
+        // initial read to give immediate feedback
+        if (!readSelection()) {
+            speak(document.body?.innerText?.slice(0, 600).trim() || "");
+        }
+    } else {
+        stopSpeaking();
+        if (selectionListener) {
+            document.removeEventListener("selectionchange", selectionListener);
+            selectionListener = null;
+        }
+        if (clickListener) {
+            document.removeEventListener("mouseup", clickListener);
+            document.removeEventListener("keyup", clickListener);
+            clickListener = null;
+        }
+    }
 }

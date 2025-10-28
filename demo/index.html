@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sienna Accessibility Widget Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0 0 120px;
+            line-height: 1.6;
+            background: #f4f6fb;
+            color: #1f2937;
+        }
+
+        header {
+            padding: 48px 24px 32px;
+            background: linear-gradient(135deg, #305dff 0%, #4c38ff 100%);
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            margin-bottom: 12px;
+            font-size: clamp(2rem, 6vw, 3rem);
+        }
+
+        header p {
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 24px 64px;
+            background: white;
+            border-radius: 18px 18px 0 0;
+            box-shadow: 0 32px 64px rgb(15 23 42 / 12%);
+            margin-top: -48px;
+        }
+
+        section + section {
+            margin-top: 48px;
+        }
+
+        .card-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            margin-top: 24px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .controls button {
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid #6366f1;
+            background: white;
+            color: #312e81;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background: #eef2ff;
+        }
+
+        footer {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 24px;
+            text-align: center;
+            color: #4b5563;
+        }
+
+        @media (max-width: 720px) {
+            main {
+                margin: 0 12px;
+                padding: 24px 18px 52px;
+            }
+
+            footer {
+                margin: 24px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Testing Sienna Accessibility Widget</h1>
+        <p>
+            Use this page to manually verify accessibility tools, widget placement, screen reader,
+            and voice navigation behaviour. Build the project first with <code>npm run build</code>
+            so the script in <code>dist/</code> is up-to-date.
+        </p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Interactive Controls</h2>
+            <p>
+                Call the exposed helper functions after the widget loads. Try setting a custom icon or
+                registering extra translations right from the console.
+            </p>
+
+            <div class="controls">
+                <button type="button" id="setEmojiIcon">Set Emoji Icon</button>
+                <button type="button" id="setDefaultIcon">Reset Icon</button>
+                <button type="button" id="registerLanguage">Register Bahasa Indonesia</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>Sample Content</h2>
+            <p>
+                “Accessibility is about giving every visitor an equivalent experience.”
+                Use the widget tools to adjust typography, toggle dyslexia-friendly fonts,
+                highlight links, or adjust contrast modes against this content.
+            </p>
+
+            <div class="card-grid">
+                <article class="card">
+                    <h3>Typography</h3>
+                    <p>
+                        Experiment with font size controls, line height, and letter spacing.
+                        Screen reader users should be able to select text and have it read aloud.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <h3>Motion</h3>
+                    <p>
+                        Click “Stop Animations” to pause animated elements. This card contains
+                        a subtle shimmering gradient to verify the behaviour.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <h3>Navigation</h3>
+                    <p>
+                        Toggle “Voice Navigation” then say “Open menu”, “Increase font”,
+                        or “Reset settings” into your microphone (Chrome / Edge recommended).
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <h2>Manual Checklist</h2>
+            <ol>
+                <li>Open the menu via the floating button.</li>
+                <li>Test each content, contrast, and tool button.</li>
+                <li>Move the widget button to a new position.</li>
+                <li>Enable Screen Reader, select text, and click content to hear narration.</li>
+                <li>Enable Voice Navigation and try the commands printed in the Tools panel.</li>
+                <li>Refresh the page and confirm settings persist from local storage.</li>
+            </ol>
+        </section>
+    </main>
+
+    <footer>
+        <strong>Tip:</strong> open the browser console if you want to call
+        <code>window.SiennaPlugin</code> helpers directly.
+    </footer>
+
+    <script src="../dist/sienna-accessibility.umd.js"
+            data-asw-lang="en"
+            data-asw-position="bottom-right"
+            data-asw-offset="24,24"
+            defer></script>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const $setEmojiIcon = document.getElementById("setEmojiIcon");
+            const $setDefaultIcon = document.getElementById("setDefaultIcon");
+            const $registerLanguage = document.getElementById("registerLanguage");
+
+            const waitForPlugin = () =>
+                new Promise(resolve => {
+                    if (window.SiennaPlugin) {
+                        resolve(window.SiennaPlugin);
+                        return;
+                    }
+                    const interval = window.setInterval(() => {
+                        if (window.SiennaPlugin) {
+                            window.clearInterval(interval);
+                            resolve(window.SiennaPlugin);
+                        }
+                    }, 50);
+                });
+
+            $setEmojiIcon?.addEventListener("click", async () => {
+                const plugin = await waitForPlugin();
+                plugin.setIcon("<span aria-hidden='true' style='font-size:1.5em;'>🌈</span>");
+            });
+
+            $setDefaultIcon?.addEventListener("click", async () => {
+                const plugin = await waitForPlugin();
+                plugin.setIcon();
+            });
+
+            $registerLanguage?.addEventListener("click", async () => {
+                const plugin = await waitForPlugin();
+                plugin.registerLanguage({
+                    code: "id",
+                    label: "Bahasa Indonesia",
+                    dictionary: {
+                        "Accessibility Menu": "Menu Aksesibilitas",
+                        "Reset settings": "Atur Ulang",
+                        "Content Adjustments": "Penyesuaian Konten",
+                        "Color Adjustments": "Penyesuaian Warna",
+                        "Tools": "Alat Bantu",
+                        "Widget Settings": "Pengaturan Widget",
+                        "Screen Reader": "Pembaca Layar",
+                        "Voice Navigation": "Navigasi Suara",
+                        "Widget Position": "Posisi Widget",
+                        "Open Accessibility Menu": "Buka Menu Aksesibilitas"
+                    }
+                });
+                plugin.changeLanguage("id");
+            });
+        });
+    </script>
+</body>
+</html>

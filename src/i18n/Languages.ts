@@ -54,18 +54,91 @@ export const LANGUAGES: ILanguage[] = [
   { code: "zh-Hant", label: "繁體中文 (Traditional Chinese)" }
 ];
 
-const locales = LANGUAGES.map(lang => lang.code);
 export interface ILanguage {
   code: string;
   label: string;
 }
 
-export const LANGUAGE_DICTIONARY: Record<string, ILanguage> = {};
+export interface IRegisterLanguageOptions {
+  code: string;
+  label?: string;
+  dictionary: Record<string, string>;
+  merge?: boolean;
+}
 
-// @ts-expect-error"
-export async function loadLanguages() {
-  for (const locale of locales) {
-    // @ts-expect-error"
-    LANGUAGE_DICTIONARY[locale] = (await import(`../locales/${locale}.json`)).default;
+export const LANGUAGE_DICTIONARY: Record<string, Record<string, string>> = {};
+
+function normalizeCode(code: string): string {
+  return String(code || "").trim();
+}
+
+export function findLanguage(code: string): ILanguage | undefined {
+  const normalized = normalizeCode(code).toLowerCase();
+  return LANGUAGES.find((lang) => lang.code.toLowerCase() === normalized);
+}
+
+export function resolveLanguageCode(code?: string | null): string {
+  const normalized = normalizeCode(code || "");
+  if (!normalized) {
+    return "en";
   }
+
+  const exactMatch = findLanguage(normalized);
+  if (exactMatch) {
+    return exactMatch.code;
+  }
+
+  const shortCode = normalized.split(/[-_]/)[0];
+  if (shortCode) {
+    const partialMatch = findLanguage(shortCode);
+    if (partialMatch) {
+      return partialMatch.code;
+    }
+  }
+
+  return "en";
+}
+
+export async function loadLanguages(): Promise<void> {
+  for (const { code } of LANGUAGES) {
+    if (LANGUAGE_DICTIONARY[code]) {
+      continue;
+    }
+
+    try {
+      const dictionary = (await import(`../locales/${code}.json`)).default;
+      LANGUAGE_DICTIONARY[code] = dictionary;
+    } catch (error) {
+      console.warn(`[Sienna] Missing locale file for "${code}"`, error);
+      LANGUAGE_DICTIONARY[code] = LANGUAGE_DICTIONARY[code] || {};
+    }
+  }
+}
+
+export function registerLanguage({ code, label, dictionary, merge }: IRegisterLanguageOptions): string | undefined {
+  const resolvedCode = normalizeCode(code);
+  if (!resolvedCode) {
+    console.warn("[Sienna] registerLanguage requires a non-empty language code.");
+    return undefined;
+  }
+
+  const existing = findLanguage(resolvedCode);
+  if (!existing) {
+    LANGUAGES.push({
+      code: resolvedCode,
+      label: label || resolvedCode
+    });
+  } else if (label && existing.label !== label) {
+    existing.label = label;
+  }
+
+  const safeDictionary = dictionary || {};
+  const currentDictionary = LANGUAGE_DICTIONARY[resolvedCode] || {};
+  LANGUAGE_DICTIONARY[resolvedCode] = merge ? { ...currentDictionary, ...safeDictionary } : { ...safeDictionary };
+
+  if (typeof document !== "undefined" && typeof CustomEvent !== "undefined") {
+    document.dispatchEvent(new CustomEvent("asw:languages:updated", { detail: { code: resolvedCode } }));
+  }
+
+  return resolvedCode;
 }

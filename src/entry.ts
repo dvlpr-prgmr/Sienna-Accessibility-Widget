@@ -12,7 +12,8 @@ async function initialize() {
             lang: getDefaultLanguage(),
             position: getScriptDataAttribute("position"),
             offset: getScriptDataAttribute("offset")?.split(",").map(Number),
-            size: getScriptDataAttribute("size")
+            size: getScriptDataAttribute("size"),
+            icon: getScriptDataAttribute("icon")
         };
         
         await loadLanguages();
@@ -33,4 +34,3 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     // Use readystatechange for async support
     document.addEventListener("readystatechange", initialize);
 }
-

@@ -8,7 +8,9 @@
   "scripts": {
     "watch": "node esbuild.config.js --watch",
     "build": "node esbuild.config.js --minify",
-    "lint": "eslint src --ext .ts,.js"
+    "lint": "eslint src --ext .ts,.js",
+    "demo": "npm run build && node scripts/demo-server.js",
+    "demo:serve": "node scripts/demo-hot.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +24,7 @@
   "homepage": "https://accessibility-widget.pages.dev/",
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "esbuild": "0.25.1",
+    "esbuild": "^0.21.5",
     "eslint": "^9.38.0",
     "html-minifier": "^4.0.0",
     "typescript-eslint": "^8.46.1"

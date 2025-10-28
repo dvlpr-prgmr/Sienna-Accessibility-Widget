@@ -23,8 +23,9 @@
     border-radius: 50%;
     align-items: center;
     justify-content: center;
-    width: 58px;
-    height: 58px;
+    width: var(--asw-button-size, 58px);
+    height: var(--asw-button-size, 58px);
+    --asw-icon-size: calc(var(--asw-button-size, 58px) * 0.62);
     display: flex;
     cursor: pointer;
     border: 3px solid white !important;
@@ -34,13 +35,22 @@
     background: linear-gradient(96deg, rgba(50,108,255,1) 0%, rgba(0,72,255,1) 100%) !important;
 }
 
-.asw-menu-btn svg {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-    min-width: 36px;
-    max-width: 36px;
-    max-height: 36px;
+.asw-menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.asw-menu-btn svg,
+.asw-menu-btn img {
+    width: var(--asw-icon-size, 36px);
+    height: var(--asw-icon-size, 36px);
+    min-height: var(--asw-icon-size, 36px);
+    min-width: var(--asw-icon-size, 36px);
+    max-width: var(--asw-icon-size, 36px);
+    max-height: var(--asw-icon-size, 36px);
     background: transparent !important;
 }
 
@@ -48,18 +58,21 @@
     transform: scale(1.05);
 }
 
+.asw-sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
 @media only screen and (max-width: 768px) {
     .asw-menu-btn {
-        width: 42px;
-        height: 42px;
-    }
-
-    .asw-menu-btn svg {
-        width: 26px;
-        height: 26px;
-        min-height: 26px;
-        min-width: 26px;
-        max-width: 26px;
-        max-height: 26px;
+        --asw-button-size: 42px;
+        --asw-icon-size: 26px;
     }
 }

@@ -2,23 +2,23 @@ import {
     saveUserSettings,
     userSettings
 } from "@/globals/userSettings";
-import { LANGUAGES } from "./Languages";
+import { LANGUAGES, resolveLanguageCode } from "./Languages";
 import translateWidget from "@/views/menu/translateWidget";
 import { $menu } from "@/views/menu/menu";
 
 export function changeLanguage(newLang) {
-    newLang = String(newLang || "").toLowerCase();
+    const resolvedCode = resolveLanguageCode(newLang);
 
-    if (!LANGUAGES.some(lang => lang.code === newLang)) {
-        newLang = "en";
+    if (!LANGUAGES.some((language) => language.code === resolvedCode)) {
+        return;
     }
 
-    if (userSettings.lang !== newLang) {
-        userSettings.lang = newLang;
+    if (userSettings.lang !== resolvedCode) {
+        userSettings.lang = resolvedCode;
 
-        const $lang = $menu.querySelector("#asw-language");
+        const $lang = $menu?.querySelector<HTMLSelectElement>("#asw-language");
         if ($lang) {
-            $lang.value = newLang;
+            $lang.value = resolvedCode;
         }
 
         translateWidget();

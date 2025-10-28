@@ -9,6 +9,72 @@ import {
 } from "@/globals/pluginConfig";
 
 export let $widget: HTMLElement;
+export let $widgetButton: HTMLElement | null = null;
+let defaultIconHTML = "";
+const DEFAULT_BUTTON_SIZE = 58;
+
+export function applyButtonPosition() {
+    if (!$widgetButton && $widget) {
+        $widgetButton = $widget.querySelector<HTMLElement>(".asw-menu-btn");
+    }
+
+    if ($widgetButton) {
+        $widgetButton.style.top = "auto";
+        $widgetButton.style.bottom = "auto";
+        $widgetButton.style.left = "auto";
+        $widgetButton.style.right = "auto";
+        Object.assign($widgetButton.style, getButtonStyle());
+
+        const size = Number(pluginConfig.size) || DEFAULT_BUTTON_SIZE;
+        const iconSize = Math.max(Math.round(size * 0.62), 20);
+        $widgetButton.style.setProperty("--asw-button-size", `${size}px`);
+        $widgetButton.style.setProperty("--asw-icon-size", `${iconSize}px`);
+        $widgetButton.style.width = `${size}px`;
+        $widgetButton.style.height = `${size}px`;
+    }
+}
+
+export function applyButtonIcon() {
+    if (!$widget) {
+        return;
+    }
+
+    const iconContainer = $widget.querySelector<HTMLElement>(".asw-menu-icon");
+    if (!iconContainer) {
+        return;
+    }
+
+    let iconValue = (pluginConfig.icon || "").trim();
+
+    if (iconValue.startsWith("#")) {
+        const template = document.querySelector<HTMLElement>(iconValue);
+        if (template) {
+            if (template instanceof HTMLTemplateElement) {
+                iconValue = template.innerHTML.trim();
+            } else {
+                iconValue = template.innerHTML?.trim() || template.textContent?.trim() || "";
+            }
+        } else {
+            iconValue = "";
+        }
+    }
+
+    if (iconValue) {
+        if (iconValue.startsWith("<")) {
+            iconContainer.innerHTML = iconValue;
+        } else {
+            iconContainer.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = iconValue;
+            img.alt = "";
+            img.setAttribute("role", "presentation");
+            img.setAttribute("aria-hidden", "true");
+            iconContainer.appendChild(img);
+        }
+    } else if (defaultIconHTML) {
+        iconContainer.innerHTML = defaultIconHTML;
+    }
+}
 
 export function renderWidget() {
     $widget = document.createElement("div");
@@ -16,7 +82,11 @@ export function renderWidget() {
     $widget.innerHTML = `<style>${css}</style>${template}`;
 
     const $btn: HTMLElement = $widget.querySelector(".asw-menu-btn");
-    Object.assign($btn.style, getButtonStyle());
+    $widgetButton = $btn;
+    const $icon = $widget.querySelector<HTMLElement>(".asw-menu-icon");
+    defaultIconHTML = $icon?.innerHTML || defaultIconHTML;
+    applyButtonPosition();
+    applyButtonIcon();
     
     $btn?.addEventListener("click", (event) => {
         event.preventDefault();
@@ -93,5 +163,3 @@ function getButtonStyle() {
             };
     }
 }
-
-

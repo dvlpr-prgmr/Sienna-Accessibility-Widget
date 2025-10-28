@@ -4,13 +4,14 @@ import template from "./menu.html";
 import FilterButtons from "./FilterButtons";
 import ContentButtons from "./ContentButtons";
 import ToolButtons from "../../enum/TOOL_PRESETS";
+import widgetSettingsIcon from "../../icons/widgetSettingsIcon.svg";
 
 import renderButtons from "./renderButtons";
 import adjustFontSize from "../../tools/adjustFontSize";
 import renderTools from "./renderTools";
 import reset from "./reset";
 
-import { ILanguage, LANGUAGES } from "../../i18n/Languages";
+import { ILanguage, LANGUAGES, resolveLanguageCode } from "../../i18n/Languages";
 
 import css from "./menu.css";
 import enableContrast from "@/tools/enableContrast";
@@ -18,7 +19,7 @@ import { pluginConfig } from "@/globals/pluginConfig";
 import { userSettings, saveUserSettings } from "@/globals/userSettings";
 import { changeLanguage } from "@/i18n/changeLanguage";
 import toggleMenu from "./toggleMenu";
-import { $widget } from "../widget/widget";
+import { $widget, applyButtonPosition } from "../widget/widget";
 
 export default function renderMenu() {
     const $container: HTMLElement = document.createElement("div");
@@ -54,22 +55,117 @@ export default function renderMenu() {
         });
     }
 
-    // *** Translations ***
-    if (!userSettings.lang && pluginConfig?.lang) {
-        userSettings.lang = pluginConfig.lang;
+    // *** Widget Placement ***
+    const currentPosition = userSettings.position || pluginConfig.position || "bottom-left";
+    const $positionToggle = $menu.querySelector<HTMLButtonElement>(".asw-position-toggle");
+    const $positionCard = $menu.querySelector<HTMLElement>(".asw-position-card");
+    const $settingsToggle = $menu.querySelector<HTMLButtonElement>(".asw-settings-toggle");
+    const $settingsCard = $menu.querySelector<HTMLElement>(".asw-settings-card");
+    const $settingsIcon = $menu.querySelector<HTMLElement>(".asw-settings-icon");
+
+    if ($settingsIcon) {
+        $settingsIcon.innerHTML = widgetSettingsIcon;
     }
 
-    if (!LANGUAGES.some(lang => lang.code === userSettings.lang)) {
-        userSettings.lang = "en";
+    const setSettingsVisibility = (expanded: boolean) => {
+        if (!$settingsCard || !$settingsToggle) {
+            return;
+        }
+
+        $settingsToggle.setAttribute("aria-expanded", String(expanded));
+        $settingsCard.classList.toggle("asw-settings-open", expanded);
+    };
+
+    if ($settingsToggle) {
+        setSettingsVisibility(false);
+        $settingsToggle.addEventListener("click", () => {
+            const expanded = $settingsToggle.getAttribute("aria-expanded") !== "true";
+            setSettingsVisibility(expanded);
+        });
     }
 
-    const $lang = $menu.querySelector("#asw-language");
-    const langOptions = LANGUAGES.map((lang: ILanguage) => `<option value="${lang.code}">${lang.label}</option>`).join('');
-    $lang.innerHTML = langOptions;
-    $lang.value = userSettings.lang;
-    $lang.addEventListener("change", (event) => {
-        changeLanguage(event.target.value);
+    const setPositionGridVisibility = (expanded: boolean) => {
+        if (!$positionCard || !$positionToggle) {
+            return;
+        }
+
+        $positionToggle.setAttribute("aria-expanded", String(expanded));
+        $positionCard.classList.toggle("asw-position-open", expanded);
+    };
+
+    if ($positionToggle) {
+        setPositionGridVisibility(false);
+        $positionToggle.addEventListener("click", () => {
+            const expanded = $positionToggle.getAttribute("aria-expanded") !== "true";
+            if (expanded) {
+                setSettingsVisibility(true);
+            }
+            setPositionGridVisibility(expanded);
+        });
+    }
+
+    const positionButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-position-btn"));
+
+    positionButtons.forEach((button) => {
+        button.classList.toggle("asw-selected", button.dataset.position === currentPosition);
+        button.addEventListener("click", () => {
+            const selectedPosition = button.dataset.position;
+            if (!selectedPosition) {
+                return;
+            }
+
+            positionButtons.forEach((btn) =>
+                btn.classList.toggle("asw-selected", btn === button)
+            );
+
+            pluginConfig.position = selectedPosition;
+            userSettings.position = selectedPosition;
+            if (selectedPosition.includes("right")) {
+                $menu.style.right = "0px";
+                $menu.style.left = "auto";
+            } else {
+                $menu.style.left = "0px";
+                $menu.style.right = "auto";
+            }
+            saveUserSettings();
+            applyButtonPosition();
+            setSettingsVisibility(true);
+            setPositionGridVisibility(true);
+        });
     });
+
+    applyButtonPosition();
+
+    // *** Translations ***
+    userSettings.lang = resolveLanguageCode(userSettings.lang || pluginConfig?.lang);
+
+    const $lang = $menu.querySelector<HTMLSelectElement>("#asw-language");
+
+    const populateLanguageOptions = () => {
+        if (!$lang) {
+            return;
+        }
+
+        const langOptions = LANGUAGES.map((lang: ILanguage) => `<option value="${lang.code}">${lang.label}</option>`).join('');
+        const previousValue = $lang.value;
+        $lang.innerHTML = langOptions;
+
+        const desiredValue = LANGUAGES.some((lang) => lang.code === userSettings.lang)
+            ? userSettings.lang
+            : resolveLanguageCode(previousValue);
+
+        if (LANGUAGES.some((lang) => lang.code === desiredValue)) {
+            $lang.value = desiredValue;
+        }
+    };
+
+    populateLanguageOptions();
+
+    $lang?.addEventListener("change", (event) => {
+        changeLanguage((event.target as HTMLSelectElement).value);
+    });
+
+    document.addEventListener("asw:languages:updated", populateLanguageOptions);
 
     // *** Utils ***
     $container.querySelectorAll('.asw-menu-close, .asw-overlay').forEach((el) =>

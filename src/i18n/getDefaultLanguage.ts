@@ -1,4 +1,5 @@
 import { getScriptDataAttribute } from "../utils/getScriptDataAttribute";
+import { resolveLanguageCode } from "./Languages";
 
 export function getDefaultLanguage() {
     const language = 
@@ -7,5 +8,5 @@ export function getDefaultLanguage() {
         navigator?.language ||
         document.querySelector('meta[http-equiv="Content-Language"]')?.content
 
-    return language?.split(/[-_]/)?.[0]?.trim() || "en";
+    return resolveLanguageCode(language);
 }
