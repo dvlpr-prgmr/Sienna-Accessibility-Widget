@@ -137,7 +137,7 @@ export function registerLanguage({ code, label, dictionary, merge }: IRegisterLa
   LANGUAGE_DICTIONARY[resolvedCode] = merge ? { ...currentDictionary, ...safeDictionary } : { ...safeDictionary };
 
   if (typeof document !== "undefined" && typeof CustomEvent !== "undefined") {
-    document.dispatchEvent(new CustomEvent("asw:languages:updated", { detail: { code: resolvedCode } }));
+    document.dispatchEvent(new CustomEvent("nextbility:languages:updated", { detail: { code: resolvedCode } }));
   }
 
   return resolvedCode;

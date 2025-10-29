@@ -5,7 +5,7 @@ import { applyButtonPosition, applyButtonIcon } from "../widget/widget";
 import { changeLanguage } from "@/i18n/changeLanguage";
 
 export default function reset() {
-    document?.querySelectorAll(".asw-selected")?.forEach(el => el?.classList?.remove("asw-selected"))
+    document?.querySelectorAll(".nextbility-selected")?.forEach(el => el?.classList?.remove("nextbility-selected"))
 
     userSettings.states = {};
     userSettings.position = undefined;
@@ -21,27 +21,27 @@ export default function reset() {
     applyButtonPosition();
     applyButtonIcon();
 
-    const positionButtons = document.querySelectorAll<HTMLButtonElement>(".asw-position-btn");
+    const positionButtons = document.querySelectorAll<HTMLButtonElement>(".nextbility-position-btn");
     positionButtons.forEach((btn) =>
-        btn.classList.toggle("asw-selected", btn.dataset.position === pluginConfig.position)
+        btn.classList.toggle("nextbility-selected", btn.dataset.position === pluginConfig.position)
     );
 
-    const $positionToggle = document.querySelector<HTMLButtonElement>(".asw-position-toggle");
-    const $positionCard = document.querySelector<HTMLElement>(".asw-position-card");
-    const $settingsToggle = document.querySelector<HTMLButtonElement>(".asw-settings-toggle");
-    const $settingsCard = document.querySelector<HTMLElement>(".asw-settings-card");
-    const $customPaletteTabs = document.querySelectorAll<HTMLButtonElement>(".asw-custom-palette-tab");
-    const $customPaletteRange = document.querySelector<HTMLInputElement>(".asw-custom-palette-range");
-    const $customPaletteBars = document.querySelectorAll<HTMLDivElement>(".asw-contrast-bars");
+    const $positionToggle = document.querySelector<HTMLButtonElement>(".nextbility-position-toggle");
+    const $positionCard = document.querySelector<HTMLElement>(".nextbility-position-card");
+    const $settingsToggle = document.querySelector<HTMLButtonElement>(".nextbility-settings-toggle");
+    const $settingsCard = document.querySelector<HTMLElement>(".nextbility-settings-card");
+    const $customPaletteTabs = document.querySelectorAll<HTMLButtonElement>(".nextbility-custom-palette-tab");
+    const $customPaletteRange = document.querySelector<HTMLInputElement>(".nextbility-custom-palette-range");
+    const $customPaletteBars = document.querySelectorAll<HTMLDivElement>(".nextbility-contrast-bars");
 
     if ($positionToggle && $positionCard) {
         $positionToggle.setAttribute("aria-expanded", "false");
-        $positionCard.classList.remove("asw-position-open");
+        $positionCard.classList.remove("nextbility-position-open");
     }
 
     if ($settingsToggle && $settingsCard) {
         $settingsToggle.setAttribute("aria-expanded", "false");
-        $settingsCard.classList.remove("asw-settings-open");
+        $settingsCard.classList.remove("nextbility-settings-open");
     }
 
     $customPaletteTabs.forEach((tab) => {
@@ -52,25 +52,25 @@ export default function reset() {
 
     if ($customPaletteRange) {
         $customPaletteRange.value = "0";
-        $customPaletteRange.style.removeProperty("--asw-palette-gradient");
-        $customPaletteRange.style.removeProperty("--asw-palette-thumb");
+        $customPaletteRange.style.removeProperty("--nextbility-palette-gradient");
+        $customPaletteRange.style.removeProperty("--nextbility-palette-thumb");
     }
 
     $customPaletteBars.forEach((barContainer) => {
         barContainer.classList.remove("is-visible");
-        barContainer.querySelectorAll(".asw-contrast-bar").forEach((bar) => bar.classList.remove("is-active"));
+        barContainer.querySelectorAll(".nextbility-contrast-bar").forEach((bar) => bar.classList.remove("is-active"));
     });
 
-    const $contrastCycleButton = document.querySelector<HTMLButtonElement>('.asw-filter[data-key="contrast-cycle"]');
+    const $contrastCycleButton = document.querySelector<HTMLButtonElement>('.nextbility-filter[data-key="contrast-cycle"]');
     if ($contrastCycleButton) {
         $contrastCycleButton.setAttribute("aria-pressed", "false");
-        const label = $contrastCycleButton.querySelector<HTMLSpanElement>('.asw-translate');
+        const label = $contrastCycleButton.querySelector<HTMLSpanElement>('.nextbility-translate');
         if (label) {
             label.setAttribute("data-translate", "Contrast");
             label.textContent = "Contrast";
         }
-        $contrastCycleButton.querySelectorAll('.asw-contrast-bar').forEach((bar) => bar.classList.remove('is-active'));
-        $contrastCycleButton.querySelector('.asw-contrast-bars')?.classList.remove('is-visible');
+        $contrastCycleButton.querySelectorAll('.nextbility-contrast-bar').forEach((bar) => bar.classList.remove('is-active'));
+        $contrastCycleButton.querySelector('.nextbility-contrast-bars')?.classList.remove('is-visible');
     }
 
     runAccessibility();

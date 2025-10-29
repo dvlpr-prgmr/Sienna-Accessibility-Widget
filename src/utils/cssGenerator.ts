@@ -65,7 +65,7 @@ export function injectToolCSS(config: IToolConfig) {
         enable=false
     } = config;
 
-    const toolId = `asw-${ id }`
+    const toolId = `nextbility-${ id }`
 
     if(enable) {
         const css = generateCSSFromConfig(config);

@@ -1,5 +1,5 @@
-.asw-widget,
-.asw-menu {
+.nextbility-widget,
+.nextbility-menu {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -8,21 +8,21 @@
     -webkit-font-smoothing: antialiased;
 }
 
-.asw-container {
-    --asw-widget-font: "Inter", Arial, Helvetica, sans-serif;
-    font-family: var(--asw-widget-font);
+.nextbility-container {
+    --nextbility-widget-font: "Inter", Arial, Helvetica, sans-serif;
+    font-family: var(--nextbility-widget-font);
 }
 
-.asw-container * {
+.nextbility-container * {
     font-family: inherit;
 }
 
-.asw-widget *,
-.asw-menu * {
+.nextbility-widget *,
+.nextbility-menu * {
     box-sizing: border-box !important;
 }
 
-.asw-menu-btn {
+.nextbility-menu-btn {
     position: fixed;
     z-index: 500000;
     left: 30px;
@@ -32,9 +32,9 @@
     border-radius: 50%;
     align-items: center;
     justify-content: center;
-    width: var(--asw-button-size, 58px);
-    height: var(--asw-button-size, 58px);
-    --asw-icon-size: calc(var(--asw-button-size, 58px) * 0.62);
+    width: var(--nextbility-button-size, 58px);
+    height: var(--nextbility-button-size, 58px);
+    --nextbility-icon-size: calc(var(--nextbility-button-size, 58px) * 0.62);
     display: flex;
     cursor: pointer;
     border: 3px solid white !important;
@@ -44,7 +44,7 @@
     background: linear-gradient(96deg, rgba(50,108,255,1) 0%, rgba(0,72,255,1) 100%) !important;
 }
 
-.asw-menu-icon {
+.nextbility-menu-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,22 +52,22 @@
     height: 100%;
 }
 
-.asw-menu-btn svg,
-.asw-menu-btn img {
-    width: var(--asw-icon-size, 36px);
-    height: var(--asw-icon-size, 36px);
-    min-height: var(--asw-icon-size, 36px);
-    min-width: var(--asw-icon-size, 36px);
-    max-width: var(--asw-icon-size, 36px);
-    max-height: var(--asw-icon-size, 36px);
+.nextbility-menu-btn svg,
+.nextbility-menu-btn img {
+    width: var(--nextbility-icon-size, 36px);
+    height: var(--nextbility-icon-size, 36px);
+    min-height: var(--nextbility-icon-size, 36px);
+    min-width: var(--nextbility-icon-size, 36px);
+    max-width: var(--nextbility-icon-size, 36px);
+    max-height: var(--nextbility-icon-size, 36px);
     background: transparent !important;
 }
 
-.asw-menu-btn:hover {
+.nextbility-menu-btn:hover {
     transform: scale(1.05);
 }
 
-.asw-sr-only {
+.nextbility-sr-only {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;
@@ -80,8 +80,8 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .asw-menu-btn {
-        --asw-button-size: 42px;
-        --asw-icon-size: 26px;
+    .nextbility-menu-btn {
+        --nextbility-button-size: 42px;
+        --nextbility-icon-size: 26px;
     }
 }

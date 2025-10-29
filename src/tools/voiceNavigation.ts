@@ -21,7 +21,7 @@ let recognition: SpeechRecognition | null = null;
 let enabled = false;
 
 function getToggleButton(): HTMLElement | null {
-    return document.querySelector<HTMLElement>('.asw-btn[data-key="voice-navigation"]');
+    return document.querySelector<HTMLElement>('.nextbility-btn[data-key="voice-navigation"]');
 }
 
 const commands: Command[] = [
@@ -72,7 +72,7 @@ function adjustFontSizeByStep(step: number) {
     userSettings.states.fontSize = fontSize;
     saveUserSettings();
 
-    const $amount = document.querySelector<HTMLElement>(".asw-amount");
+    const $amount = document.querySelector<HTMLElement>(".nextbility-amount");
     if ($amount) {
         $amount.textContent = `${(fontSize * 100).toFixed(0)}%`;
     }
@@ -87,8 +87,8 @@ function toggleScreenReader(shouldEnable: boolean) {
     saveUserSettings();
     screenReader(shouldEnable);
 
-    const button = document.querySelector<HTMLElement>(`.asw-btn[data-key="screen-reader"]`);
-    button?.classList.toggle("asw-selected", shouldEnable);
+    const button = document.querySelector<HTMLElement>(`.nextbility-btn[data-key="screen-reader"]`);
+    button?.classList.toggle("nextbility-selected", shouldEnable);
 }
 
 function handleResult(event: SpeechRecognitionEvent) {
@@ -172,12 +172,12 @@ export default function voiceNavigation(enable = false) {
             userSettings.states["voice-navigation"] = false;
             saveUserSettings();
         }
-        getToggleButton()?.classList.remove("asw-selected");
+        getToggleButton()?.classList.remove("nextbility-selected");
         return;
     }
 
     enabled = enable;
-    document.documentElement.classList.toggle("asw-voice-navigation", enable);
+    document.documentElement.classList.toggle("nextbility-voice-navigation", enable);
 
     if (enable) {
         if (!recognition) {

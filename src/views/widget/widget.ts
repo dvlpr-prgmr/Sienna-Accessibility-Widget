@@ -15,7 +15,7 @@ const DEFAULT_BUTTON_SIZE = 58;
 
 export function applyButtonPosition() {
     if (!$widgetButton && $widget) {
-        $widgetButton = $widget.querySelector<HTMLElement>(".asw-menu-btn");
+        $widgetButton = $widget.querySelector<HTMLElement>(".nextbility-menu-btn");
     }
 
     if ($widgetButton) {
@@ -27,8 +27,8 @@ export function applyButtonPosition() {
 
         const size = Number(pluginConfig.size) || DEFAULT_BUTTON_SIZE;
         const iconSize = Math.max(Math.round(size * 0.62), 20);
-        $widgetButton.style.setProperty("--asw-button-size", `${size}px`);
-        $widgetButton.style.setProperty("--asw-icon-size", `${iconSize}px`);
+        $widgetButton.style.setProperty("--nextbility-button-size", `${size}px`);
+        $widgetButton.style.setProperty("--nextbility-icon-size", `${iconSize}px`);
         $widgetButton.style.width = `${size}px`;
         $widgetButton.style.height = `${size}px`;
     }
@@ -39,7 +39,7 @@ export function applyButtonIcon() {
         return;
     }
 
-    const iconContainer = $widget.querySelector<HTMLElement>(".asw-menu-icon");
+    const iconContainer = $widget.querySelector<HTMLElement>(".nextbility-menu-icon");
     if (!iconContainer) {
         return;
     }
@@ -78,12 +78,12 @@ export function applyButtonIcon() {
 
 export function renderWidget() {
     $widget = document.createElement("div");
-    $widget.classList.add("asw-container");
+    $widget.classList.add("nextbility-container");
     $widget.innerHTML = `<style>${css}</style>${template}`;
 
-    const $btn: HTMLElement = $widget.querySelector(".asw-menu-btn");
+    const $btn: HTMLElement = $widget.querySelector(".nextbility-menu-btn");
     $widgetButton = $btn;
-    const $icon = $widget.querySelector<HTMLElement>(".asw-menu-icon");
+    const $icon = $widget.querySelector<HTMLElement>(".nextbility-menu-icon");
     defaultIconHTML = $icon?.innerHTML || defaultIconHTML;
     applyButtonPosition();
     applyButtonIcon();

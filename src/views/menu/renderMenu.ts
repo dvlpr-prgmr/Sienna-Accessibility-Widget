@@ -105,31 +105,31 @@ export default function renderMenu() {
     const $container: HTMLElement = document.createElement("div");
     $container.innerHTML = `<style>${css}</style>` + template;
 
-    const $menu = $container.querySelector(".asw-menu");
+    const $menu = $container.querySelector(".nextbility-menu");
     if (pluginConfig?.position?.includes("right")) {
         $menu.style.right = '0px';
         $menu.style.left = 'auto';
     }
 
     $menu.querySelector(".content").innerHTML = renderButtons(ContentButtons);
-    $menu.querySelector(".tools").innerHTML = renderButtons(ToolButtons, 'asw-tools');
+    $menu.querySelector(".tools").innerHTML = renderButtons(ToolButtons, 'nextbility-tools');
 
     const $contrastGrid = $menu.querySelector(".contrast");
-    $contrastGrid.innerHTML = renderButtons(FilterButtons, 'asw-filter');
+    $contrastGrid.innerHTML = renderButtons(FilterButtons, 'nextbility-filter');
 
-    const $contrastButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-contrast-option"));
+    const $contrastButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".nextbility-contrast-option"));
 
     // *** States UI Rendering ***
     const states = userSettings?.states;
-    const filterButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>('.asw-filter'));
+    const filterButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>('.nextbility-filter'));
 
     const fontSize = Number(states?.fontSize) || 1;
     if (fontSize != 1) {
-        $menu.querySelector(".asw-amount").innerHTML = `${fontSize * 100}%`;
+        $menu.querySelector(".nextbility-amount").innerHTML = `${fontSize * 100}%`;
     }
 
     if (states) {
-        const buttons = Array.from($menu.querySelectorAll('.asw-btn'));
+        const buttons = Array.from($menu.querySelectorAll('.nextbility-btn'));
 
         Object.entries(states).forEach(([key, value]) => {
             if (!value || key === "fontSize") {
@@ -142,11 +142,11 @@ export default function renderMenu() {
 
             const selector = key === "contrast" ? states[key] : key;
             const btn = buttons.find(b => b.dataset.key === selector);
-            if (btn) btn.classList.add("asw-selected");
+            if (btn) btn.classList.add("nextbility-selected");
             if (key === "contrast" && typeof selector === "string") {
                 filterButtons.forEach(b => {
                     if (b.dataset.key !== selector) {
-                        b.classList.remove("asw-selected");
+                        b.classList.remove("nextbility-selected");
                     }
                 });
             }
@@ -160,8 +160,8 @@ export default function renderMenu() {
         "high-contrast": "High Contrast"
     };
 
-    const $contrastCycleButton = $menu.querySelector<HTMLButtonElement>('.asw-filter[data-key="contrast-cycle"]');
-    const $contrastCycleLabel = $contrastCycleButton?.querySelector<HTMLSpanElement>('.asw-translate');
+    const $contrastCycleButton = $menu.querySelector<HTMLButtonElement>('.nextbility-filter[data-key="contrast-cycle"]');
+    const $contrastCycleLabel = $contrastCycleButton?.querySelector<HTMLSpanElement>('.nextbility-translate');
 
     const updateContrastCycleButton = (value: string | false | "contrast") => {
         if (!$contrastCycleButton || !$contrastCycleLabel) {
@@ -171,13 +171,13 @@ export default function renderMenu() {
         const isActive = typeof value === "string" && value !== "contrast" && contrastCycleOrder.includes(value);
         const translationKey = isActive ? contrastLabelMap[value as keyof typeof contrastLabelMap] : "Contrast";
 
-        $contrastCycleButton.classList.toggle("asw-selected", isActive);
+        $contrastCycleButton.classList.toggle("nextbility-selected", isActive);
         $contrastCycleButton.setAttribute("aria-pressed", String(isActive));
         $contrastCycleLabel.setAttribute("data-translate", translationKey);
         $contrastCycleLabel.textContent = t(translationKey);
 
-        const barsWrapper = $contrastCycleButton.querySelector<HTMLDivElement>(".asw-contrast-bars");
-        const barElements = Array.from($contrastCycleButton.querySelectorAll<HTMLSpanElement>(".asw-contrast-bar"));
+        const barsWrapper = $contrastCycleButton.querySelector<HTMLDivElement>(".nextbility-contrast-bars");
+        const barElements = Array.from($contrastCycleButton.querySelectorAll<HTMLSpanElement>(".nextbility-contrast-bar"));
 
         barElements.forEach((bar) => bar.classList.remove("is-active"));
 
@@ -202,16 +202,16 @@ export default function renderMenu() {
 
     // *** Widget Placement ***
     const currentPosition = userSettings.position || pluginConfig.position || "bottom-left";
-    const $positionToggle = $menu.querySelector<HTMLButtonElement>(".asw-position-toggle");
-    const $positionCard = $menu.querySelector<HTMLElement>(".asw-position-card");
-    const $settingsToggle = $menu.querySelector<HTMLButtonElement>(".asw-settings-toggle");
-    const $settingsCard = $menu.querySelector<HTMLElement>(".asw-settings-card");
-    const $settingsIcon = $menu.querySelector<HTMLElement>(".asw-settings-icon");
-    const $customPaletteCard = $menu.querySelector<HTMLElement>(".asw-custom-palette-card");
-    const $customPaletteIcon = $customPaletteCard?.querySelector<HTMLElement>(".asw-custom-palette-icon");
-    const $customPaletteTabs = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-custom-palette-tab"));
-    const $customPaletteRange = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-range");
-    const $customPaletteReset = $menu.querySelector<HTMLButtonElement>(".asw-custom-palette-reset");
+    const $positionToggle = $menu.querySelector<HTMLButtonElement>(".nextbility-position-toggle");
+    const $positionCard = $menu.querySelector<HTMLElement>(".nextbility-position-card");
+    const $settingsToggle = $menu.querySelector<HTMLButtonElement>(".nextbility-settings-toggle");
+    const $settingsCard = $menu.querySelector<HTMLElement>(".nextbility-settings-card");
+    const $settingsIcon = $menu.querySelector<HTMLElement>(".nextbility-settings-icon");
+    const $customPaletteCard = $menu.querySelector<HTMLElement>(".nextbility-custom-palette-card");
+    const $customPaletteIcon = $customPaletteCard?.querySelector<HTMLElement>(".nextbility-custom-palette-icon");
+    const $customPaletteTabs = Array.from($menu.querySelectorAll<HTMLButtonElement>(".nextbility-custom-palette-tab"));
+    const $customPaletteRange = $menu.querySelector<HTMLInputElement>(".nextbility-custom-palette-range");
+    const $customPaletteReset = $menu.querySelector<HTMLButtonElement>(".nextbility-custom-palette-reset");
 
     if ($settingsIcon) {
         $settingsIcon.innerHTML = widgetSettingsIcon;
@@ -223,7 +223,7 @@ export default function renderMenu() {
         }
 
         $settingsToggle.setAttribute("aria-expanded", String(expanded));
-        $settingsCard.classList.toggle("asw-settings-open", expanded);
+        $settingsCard.classList.toggle("nextbility-settings-open", expanded);
     };
 
     if ($settingsToggle) {
@@ -311,12 +311,12 @@ export default function renderMenu() {
         const currentColor = paletteState.colors?.[category] ?? paletteDefaults[category];
 
         $customPaletteRange.value = String(hue);
-        $customPaletteRange.style.setProperty("--asw-palette-gradient", gradient);
-        $customPaletteRange.style.setProperty("--asw-palette-thumb", currentColor);
+        $customPaletteRange.style.setProperty("--nextbility-palette-gradient", gradient);
+        $customPaletteRange.style.setProperty("--nextbility-palette-thumb", currentColor);
 
-        const barsWrapper = $customPaletteCard?.querySelector<HTMLDivElement>(".asw-custom-palette-bars");
+        const barsWrapper = $customPaletteCard?.querySelector<HTMLDivElement>(".nextbility-custom-palette-bars");
         if (barsWrapper) {
-            const bars = Array.from(barsWrapper.querySelectorAll<HTMLSpanElement>(".asw-custom-palette-bar"));
+            const bars = Array.from(barsWrapper.querySelectorAll<HTMLSpanElement>(".nextbility-custom-palette-bar"));
             bars.forEach((bar) => {
                 const cat = (bar.dataset.category as CustomPaletteCategory) || "backgrounds";
                 const colorValue = paletteState.colors?.[cat] ?? paletteDefaults[cat];
@@ -402,7 +402,7 @@ export default function renderMenu() {
         }
 
         $positionToggle.setAttribute("aria-expanded", String(expanded));
-        $positionCard.classList.toggle("asw-position-open", expanded);
+        $positionCard.classList.toggle("nextbility-position-open", expanded);
     };
 
     if ($positionToggle) {
@@ -416,10 +416,10 @@ export default function renderMenu() {
         });
     }
 
-    const positionButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-position-btn"));
+    const positionButtons = Array.from($menu.querySelectorAll<HTMLButtonElement>(".nextbility-position-btn"));
 
     positionButtons.forEach((button) => {
-        button.classList.toggle("asw-selected", button.dataset.position === currentPosition);
+        button.classList.toggle("nextbility-selected", button.dataset.position === currentPosition);
         button.addEventListener("click", () => {
             const selectedPosition = button.dataset.position;
             if (!selectedPosition) {
@@ -427,7 +427,7 @@ export default function renderMenu() {
             }
 
             positionButtons.forEach((btn) =>
-                btn.classList.toggle("asw-selected", btn === button)
+                btn.classList.toggle("nextbility-selected", btn === button)
             );
 
             pluginConfig.position = selectedPosition;
@@ -451,7 +451,7 @@ export default function renderMenu() {
     // *** Translations ***
     userSettings.lang = resolveLanguageCode(userSettings.lang || pluginConfig?.lang);
 
-    const $lang = $menu.querySelector<HTMLSelectElement>("#asw-language");
+    const $lang = $menu.querySelector<HTMLSelectElement>("#nextbility-language");
 
     const populateLanguageOptions = () => {
         if (!$lang) {
@@ -477,24 +477,24 @@ export default function renderMenu() {
         changeLanguage((event.target as HTMLSelectElement).value);
     });
 
-    document.addEventListener("asw:languages:updated", populateLanguageOptions);
+    document.addEventListener("nextbility:languages:updated", populateLanguageOptions);
 
     // *** Utils ***
-    $container.querySelectorAll('.asw-menu-close, .asw-overlay').forEach((el) =>
+    $container.querySelectorAll('.nextbility-menu-close, .nextbility-overlay').forEach((el) =>
         el.addEventListener('click', toggleMenu)
     );
 
-    $container.querySelectorAll('.asw-menu-reset').forEach((el) =>
+    $container.querySelectorAll('.nextbility-menu-reset').forEach((el) =>
         el.addEventListener('click', reset)
     );
 
     // *** Controls ***
-    $menu.querySelectorAll(".asw-plus, .asw-minus").forEach((el: HTMLElement) => {
+    $menu.querySelectorAll(".nextbility-plus, .nextbility-minus").forEach((el: HTMLElement) => {
         el.addEventListener("click", () => {
             const difference = 0.1;
 
             let fontSize = userSettings?.states?.fontSize || 1;
-            if (el.classList.contains('asw-minus')) {
+            if (el.classList.contains('nextbility-minus')) {
                 fontSize -= difference;
             } else {
                 fontSize += difference;
@@ -504,7 +504,7 @@ export default function renderMenu() {
             fontSize = Math.min(fontSize, 2);
             fontSize = Number(fontSize.toFixed(2));
 
-            document.querySelector(".asw-amount").textContent = `${(fontSize * 100).toFixed(0)}%`;
+            document.querySelector(".nextbility-amount").textContent = `${(fontSize * 100).toFixed(0)}%`;
 
             adjustFontSize(fontSize);
             userSettings.states.fontSize = fontSize;
@@ -513,16 +513,16 @@ export default function renderMenu() {
         });
     });
 
-    $menu.querySelectorAll(".asw-btn").forEach((el: HTMLElement) => {
+    $menu.querySelectorAll(".nextbility-btn").forEach((el: HTMLElement) => {
         el.addEventListener("click", () => {
             const key = el.dataset.key;
-            const isSelected = !el.classList.contains("asw-selected");
+            const isSelected = !el.classList.contains("nextbility-selected");
 
-            if (el.classList.contains("asw-filter")) {
+            if (el.classList.contains("nextbility-filter")) {
                 if (key === "contrast-cycle") {
                     filterButtons.forEach(button => {
                         if (button !== el) {
-                            button.classList.remove("asw-selected");
+                            button.classList.remove("nextbility-selected");
                         }
                     });
 
@@ -536,10 +536,10 @@ export default function renderMenu() {
                     return;
                 }
 
-                filterButtons.forEach((filterBtn) => filterBtn.classList.remove("asw-selected"));
+                filterButtons.forEach((filterBtn) => filterBtn.classList.remove("nextbility-selected"));
 
                 if (isSelected) {
-                    el.classList.add("asw-selected");
+                    el.classList.add("nextbility-selected");
                 }
 
                 userSettings.states.contrast = isSelected ? key : false;
@@ -549,7 +549,7 @@ export default function renderMenu() {
                 return;
             }
 
-            el.classList.toggle("asw-selected", isSelected);
+            el.classList.toggle("nextbility-selected", isSelected);
             userSettings.states[key] = isSelected;
             renderTools();
             saveUserSettings();

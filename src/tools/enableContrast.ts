@@ -7,7 +7,7 @@ export default function enableContrast(contrast) {
 
     if (!filter) {
         // Remove styles if no contrast is set
-        document.getElementById('asw-filter-style')?.remove();
+        document.getElementById('nextbility-filter-style')?.remove();
         document.documentElement.classList.remove('aws-filter');
         return;
     }
@@ -17,6 +17,6 @@ export default function enableContrast(contrast) {
         selector: 'html.aws-filter',
     });
 
-    addStylesheet({ css, id: 'asw-filter-style' });
+    addStylesheet({ css, id: 'nextbility-filter-style' });
     document.documentElement.classList.add('aws-filter');
 }

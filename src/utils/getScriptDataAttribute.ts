@@ -1,5 +1,5 @@
 export function getScriptDataAttribute(attr) {
-    const key = `data-asw-${attr}`;
+    const key = `data-nextbility-${attr}`;
 
     const script = document.currentScript;
     if (script?.hasAttribute(key)) {

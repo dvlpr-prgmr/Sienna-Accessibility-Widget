@@ -11,7 +11,7 @@ let enabled = false;
 const speech = typeof window !== "undefined" ? window.speechSynthesis : null;
 
 function getToggleButton(): HTMLElement | null {
-    return document.querySelector<HTMLElement>('.asw-btn[data-key="screen-reader"]');
+    return document.querySelector<HTMLElement>('.nextbility-btn[data-key="screen-reader"]');
 }
 
 function getCurrentLanguage(): string {
@@ -68,7 +68,7 @@ function handleClick(event: MouseEvent) {
     }
 
     const target = event.target as HTMLElement | null;
-    const isMenuElement = target?.closest(".asw-menu, .asw-container");
+    const isMenuElement = target?.closest(".nextbility-menu, .nextbility-container");
     if (isMenuElement) {
         return;
     }
@@ -93,12 +93,12 @@ export default function screenReader(enable = false) {
             userSettings.states["screen-reader"] = false;
             saveUserSettings();
         }
-        getToggleButton()?.classList.remove("asw-selected");
+        getToggleButton()?.classList.remove("nextbility-selected");
         return;
     }
 
     enabled = enable;
-    document.documentElement.classList.toggle("asw-screen-reader", enable);
+    document.documentElement.classList.toggle("nextbility-screen-reader", enable);
 
     if (enable) {
         if (!selectionListener) {

@@ -16,7 +16,7 @@ export function changeLanguage(newLang) {
     if (userSettings.lang !== resolvedCode) {
         userSettings.lang = resolvedCode;
 
-        const $lang = $menu?.querySelector<HTMLSelectElement>("#asw-language");
+        const $lang = $menu?.querySelector<HTMLSelectElement>("#nextbility-language");
         if ($lang) {
             $lang.value = resolvedCode;
         }
