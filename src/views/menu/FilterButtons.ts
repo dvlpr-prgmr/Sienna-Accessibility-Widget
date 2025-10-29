@@ -18,11 +18,6 @@ export default [
         icon: invertColorsIcon,
     },
     {
-        label: 'Monochrome',
-        key: 'monochrome',
-        icon: monochromeIcon,
-    },
-    {
         label: 'Low Saturation',
         key: 'low-saturation',
         icon: lowSaturationIcon,

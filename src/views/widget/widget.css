@@ -8,6 +8,15 @@
     -webkit-font-smoothing: antialiased;
 }
 
+.asw-container {
+    --asw-widget-font: "Inter", Arial, Helvetica, sans-serif;
+    font-family: var(--asw-widget-font);
+}
+
+.asw-container * {
+    font-family: inherit;
+}
+
 .asw-widget *,
 .asw-menu * {
     box-sizing: border-box !important;
