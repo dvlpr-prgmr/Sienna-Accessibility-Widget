@@ -268,7 +268,6 @@ export default function renderMenu() {
 
         if (paletteState.enabled) {
             userSettings.states['custom-palette'] = paletteState;
-            setSettingsVisibility(true);
         }
     }
 
@@ -315,7 +314,7 @@ export default function renderMenu() {
         $customPaletteRange.style.setProperty("--asw-palette-gradient", gradient);
         $customPaletteRange.style.setProperty("--asw-palette-thumb", currentColor);
 
-        const barsWrapper = $customPaletteCard?.querySelector<HTMLDivElement>(".asw-contrast-bars");
+        const barsWrapper = $customPaletteCard?.querySelector<HTMLDivElement>(".asw-custom-palette-bars");
         if (barsWrapper) {
             const bars = Array.from(barsWrapper.querySelectorAll<HTMLSpanElement>(".asw-custom-palette-bar"));
             bars.forEach((bar) => {
@@ -352,10 +351,6 @@ export default function renderMenu() {
         const category = paletteState.activeCategory ?? DEFAULT_CUSTOM_PALETTE_STATE.activeCategory;
         setActiveTab(category);
         updateSliderVisuals(category);
-
-        if (paletteState.enabled) {
-            setSettingsVisibility(true);
-        }
     };
 
     $customPaletteTabs.forEach((tab) => {
@@ -379,7 +374,6 @@ export default function renderMenu() {
         };
 
         paletteState.enabled = true;
-        setSettingsVisibility(true);
 
         updateSliderVisuals(category);
         persistPaletteState(true);
