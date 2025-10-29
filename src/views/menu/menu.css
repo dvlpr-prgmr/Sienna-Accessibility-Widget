@@ -198,106 +198,155 @@
 
 .asw-custom-palette-card {
     margin-top: 20px;
-}
-
-.asw-custom-palette-panel {
-    display: none;
-    margin-top: 12px;
-    background: #f4f6fb;
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid #d6dae3;
-    gap: 16px;
-}
-
-.asw-custom-palette-card.asw-custom-palette-open .asw-custom-palette-panel {
-    display: grid;
-}
-
-.asw-custom-palette-toggle {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    background: transparent !important;
-    border: 0 !important;
-    padding: 0 !important;
-    cursor: pointer !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: inherit !important;
-    gap: 12px;
-}
-
-.asw-custom-palette-toggle::after {
-    content: '';
-    border-style: solid;
-    border-width: 0 5px 6px 5px;
-    border-color: transparent transparent currentColor transparent;
-    transform: rotate(0deg);
-    transition: transform .2s ease;
-}
-
-.asw-custom-palette-card.asw-custom-palette-open .asw-custom-palette-toggle::after {
-    transform: rotate(180deg);
-}
-
-.asw-custom-palette-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.asw-custom-palette-field {
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid #dfe3f3;
+    background: linear-gradient(180deg, #f8faff 0%, #f2f5ff 100%);
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
+    gap: 18px;
 }
 
-.asw-custom-palette-field .asw-input {
-    padding: 0 !important;
-    height: 48px !important;
-    border-radius: 12px !important;
-    border: 1px solid #cdd0d6 !important;
-}
-
-.asw-custom-palette-field .asw-input[type="color"] {
-    min-height: 48px;
-    cursor: pointer;
-}
-
-.asw-custom-palette-enable {
+.asw-custom-palette-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 600;
+    gap: 14px;
 }
 
-.asw-custom-palette-checkbox {
-    width: 18px;
-    height: 18px;
+.asw-custom-palette-icon svg {
+    width: 32px !important;
+    height: 32px !important;
+    fill: #0a53ff !important;
+}
+
+.asw-custom-palette-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #0a53ff !important;
+}
+
+.asw-custom-palette-subtitle {
+    font-size: 13px !important;
+    color: #4a5bb7 !important;
+    margin-top: 4px;
+}
+
+.asw-custom-palette-tabs {
+    display: inline-flex;
+    gap: 6px;
+    background: #e6ebff;
+    padding: 4px;
+    border-radius: 999px;
+}
+
+.asw-custom-palette-tab {
+    border: 0;
+    background: transparent;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5bb7;
     cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.asw-custom-palette-tab.is-active {
+    background: #0a53ff;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(10, 83, 255, 0.25);
+}
+
+.asw-custom-palette-slider {
+    position: relative;
+    width: 100%;
+    padding: 4px 0 6px;
+}
+
+.asw-custom-palette-range {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--asw-palette-gradient, linear-gradient(90deg,#ff0000 0%,#ffff00 33%,#00ff00 50%,#0000ff 100%));
+    outline: none;
+    cursor: pointer;
+    border: 1px solid #d6daf5;
+}
+
+.asw-custom-palette-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--asw-palette-thumb, #0a53ff);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px rgba(10, 83, 255, 0.35);
+    transition: transform .1s ease;
+}
+
+.asw-custom-palette-range::-webkit-slider-thumb:active {
+    transform: scale(1.05);
+}
+
+.asw-custom-palette-range::-moz-range-track {
+    height: 12px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.asw-custom-palette-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: var(--asw-palette-thumb, #0a53ff);
+    box-shadow: 0 0 0 2px rgba(10, 83, 255, 0.35);
+}
+
+.asw-custom-palette-bars {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.asw-custom-palette-bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: #c9d1ff;
+    opacity: 0.3;
+    transition: opacity .2s ease;
+    border: 1px solid rgba(10, 83, 255, 0.15);
+}
+
+.asw-custom-palette-bar.is-active {
+    opacity: 1;
+}
+
+.asw-custom-palette-reset-row {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .asw-custom-palette-reset {
-    margin-top: 12px;
-    padding: 10px 16px !important;
-    background: #fff !important;
-    border: 1px solid #cdd0d6 !important;
-    border-radius: 12px !important;
-    font-size: 14px !important;
+    border: 0;
+    background: transparent;
+    font-size: 13px !important;
     font-weight: 600 !important;
+    color: #0a53ff !important;
     cursor: pointer !important;
-    align-self: flex-start;
-    transition: border-color .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .asw-custom-palette-reset:hover,
 .asw-custom-palette-reset:focus {
-    border-color: #0848ca !important;
+    text-decoration: underline;
 }
 
 .asw-position-btn {
@@ -371,43 +420,13 @@
     height: auto !important;
 }
 
-.asw-contrast-steps {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #0a53ff;
-    white-space: nowrap;
-}
-
-.asw-contrast-steps.is-visible {
-    display: flex;
-}
-
-.asw-contrast-step {
-    opacity: 0.55;
-    transition: opacity .2s ease;
-}
-
-.asw-contrast-step.is-active {
-    opacity: 1;
-}
-
-.asw-contrast-step-divider {
-    opacity: 0.3;
-    font-weight: 400;
-}
-
 
 .asw-contrast-bars {
     display: none;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 10px;
 }
 
 .asw-contrast-bars.is-visible {
@@ -415,7 +434,7 @@
 }
 
 .asw-contrast-bar {
-    width: 20px;
+    width: 28px;
     height: 4px;
     border-radius: 999px;
     background: #c9d1ff;

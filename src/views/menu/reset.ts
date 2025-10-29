@@ -30,11 +30,9 @@ export default function reset() {
     const $positionCard = document.querySelector<HTMLElement>(".asw-position-card");
     const $settingsToggle = document.querySelector<HTMLButtonElement>(".asw-settings-toggle");
     const $settingsCard = document.querySelector<HTMLElement>(".asw-settings-card");
-    const $customPaletteToggle = document.querySelector<HTMLButtonElement>(".asw-custom-palette-toggle");
-    const $customPaletteCard = document.querySelector<HTMLElement>(".asw-custom-palette-card");
-    const $customTextColor = document.querySelector<HTMLInputElement>(".asw-custom-palette-text");
-    const $customBackgroundColor = document.querySelector<HTMLInputElement>(".asw-custom-palette-background");
-    const $customPaletteCheckbox = document.querySelector<HTMLInputElement>(".asw-custom-palette-checkbox");
+    const $customPaletteTabs = document.querySelectorAll<HTMLButtonElement>(".asw-custom-palette-tab");
+    const $customPaletteRange = document.querySelector<HTMLInputElement>(".asw-custom-palette-range");
+    const $customPaletteBars = document.querySelectorAll<HTMLDivElement>(".asw-contrast-bars");
 
     if ($positionToggle && $positionCard) {
         $positionToggle.setAttribute("aria-expanded", "false");
@@ -46,21 +44,33 @@ export default function reset() {
         $settingsCard.classList.remove("asw-settings-open");
     }
 
-    if ($customPaletteToggle && $customPaletteCard) {
-        $customPaletteToggle.setAttribute("aria-expanded", "false");
-        $customPaletteCard.classList.remove("asw-custom-palette-open");
+    $customPaletteTabs.forEach((tab) => {
+        const isBackgrounds = tab.dataset.category === "backgrounds";
+        tab.classList.toggle("is-active", isBackgrounds);
+        tab.setAttribute("aria-selected", String(isBackgrounds));
+    });
+
+    if ($customPaletteRange) {
+        $customPaletteRange.value = "0";
+        $customPaletteRange.style.removeProperty("--asw-palette-gradient");
+        $customPaletteRange.style.removeProperty("--asw-palette-thumb");
     }
 
-    if ($customTextColor) {
-        $customTextColor.value = "#000000";
-    }
+    $customPaletteBars.forEach((barContainer) => {
+        barContainer.classList.remove("is-visible");
+        barContainer.querySelectorAll(".asw-contrast-bar").forEach((bar) => bar.classList.remove("is-active"));
+    });
 
-    if ($customBackgroundColor) {
-        $customBackgroundColor.value = "#ffffff";
-    }
-
-    if ($customPaletteCheckbox) {
-        $customPaletteCheckbox.checked = false;
+    const $contrastCycleButton = document.querySelector<HTMLButtonElement>('.asw-filter[data-key="contrast-cycle"]');
+    if ($contrastCycleButton) {
+        $contrastCycleButton.setAttribute("aria-pressed", "false");
+        const label = $contrastCycleButton.querySelector<HTMLSpanElement>('.asw-translate');
+        if (label) {
+            label.setAttribute("data-translate", "Contrast");
+            label.textContent = "Contrast";
+        }
+        $contrastCycleButton.querySelectorAll('.asw-contrast-bar').forEach((bar) => bar.classList.remove('is-active'));
+        $contrastCycleButton.querySelector('.asw-contrast-bars')?.classList.remove('is-visible');
     }
 
     runAccessibility();

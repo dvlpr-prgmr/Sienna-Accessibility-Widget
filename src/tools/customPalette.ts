@@ -1,14 +1,21 @@
 import addStylesheet from "@/utils/addStylesheet";
 
 const STYLE_ID = "asw-custom-palette-style";
-const DEFAULT_TEXT_COLOR = "#000000";
-const DEFAULT_BACKGROUND_COLOR = "#ffffff";
+const CONTENT_SCOPE = ":where(:not(.asw-container):not(.asw-container *))";
+
+export type CustomPaletteCategory = "backgrounds" | "headings" | "contents";
 
 export interface ICustomPaletteState {
     enabled?: boolean;
-    textColor?: string;
-    backgroundColor?: string;
+    activeCategory?: CustomPaletteCategory;
+    colors?: Partial<Record<CustomPaletteCategory, string>>;
 }
+
+const DEFAULT_COLORS: Record<CustomPaletteCategory, string> = {
+    backgrounds: "#ffffff",
+    headings: "#0a53ff",
+    contents: "#111827"
+};
 
 function sanitizeColor(color?: string, fallback = "#000000") {
     const value = (color || "").trim();
@@ -26,17 +33,26 @@ export default function customPalette(state?: ICustomPaletteState) {
         return;
     }
 
-    const textColor = sanitizeColor(state.textColor, DEFAULT_TEXT_COLOR);
-    const backgroundColor = sanitizeColor(state.backgroundColor, DEFAULT_BACKGROUND_COLOR);
+    const backgrounds = sanitizeColor(state.colors?.backgrounds, DEFAULT_COLORS.backgrounds);
+    const headings = sanitizeColor(state.colors?.headings, DEFAULT_COLORS.headings);
+    const contents = sanitizeColor(state.colors?.contents, DEFAULT_COLORS.contents);
 
     const css = `
-        html.asw-custom-palette, html.asw-custom-palette body {
-            color: ${textColor} !important;
-            background-color: ${backgroundColor} !important;
+        html.asw-custom-palette body {
+            background-color: ${backgrounds} !important;
         }
 
-        html.asw-custom-palette body * {
-            color: inherit;
+        html.asw-custom-palette body ${CONTENT_SCOPE} {
+            color: ${contents} !important;
+        }
+
+        html.asw-custom-palette body ${CONTENT_SCOPE} h1,
+        html.asw-custom-palette body ${CONTENT_SCOPE} h2,
+        html.asw-custom-palette body ${CONTENT_SCOPE} h3,
+        html.asw-custom-palette body ${CONTENT_SCOPE} h4,
+        html.asw-custom-palette body ${CONTENT_SCOPE} h5,
+        html.asw-custom-palette body ${CONTENT_SCOPE} h6 {
+            color: ${headings} !important;
         }
     `;
 
@@ -50,6 +66,6 @@ export default function customPalette(state?: ICustomPaletteState) {
 
 export const DEFAULT_CUSTOM_PALETTE_STATE: Required<ICustomPaletteState> = {
     enabled: false,
-    textColor: DEFAULT_TEXT_COLOR,
-    backgroundColor: DEFAULT_BACKGROUND_COLOR
+    activeCategory: "backgrounds",
+    colors: { ...DEFAULT_COLORS }
 };

@@ -40,10 +40,11 @@
     "Bottom Right": "Bottom Right",
     "Screen Reader": "Screen Reader",
     "Voice Navigation": "Voice Navigation",
-    "Custom Palette": "Custom Palette",
-    "Text Color": "Text Color",
-    "Background Color": "Background Color",
-    "Enable Custom Palette": "Enable Custom Palette",
-    "Reset Palette": "Reset Palette",
+    "Custom Color": "Custom Color",
+    "Change the site's colors": "Change the site's colors",
+    "Backgrounds": "Backgrounds",
+    "Headings": "Headings",
+    "Contents": "Contents",
+    "Reset colors": "Reset colors",
     "Image Desaturation": "Image Desaturation"
 }

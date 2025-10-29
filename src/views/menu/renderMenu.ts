@@ -20,8 +20,86 @@ import { userSettings, saveUserSettings } from "@/globals/userSettings";
 import { changeLanguage } from "@/i18n/changeLanguage";
 import toggleMenu from "./toggleMenu";
 import { $widget, applyButtonPosition } from "../widget/widget";
-import { DEFAULT_CUSTOM_PALETTE_STATE, ICustomPaletteState } from "@/tools/customPalette";
+import { DEFAULT_CUSTOM_PALETTE_STATE, ICustomPaletteState, CustomPaletteCategory } from "@/tools/customPalette";
 import { t } from "@/i18n/translate";
+import customPaletteIcon from "../../icons/customPaletteIcon.svg";
+
+function hslToHex(h: number, s: number, l: number): string {
+    const saturation = Math.max(0, Math.min(100, s)) / 100;
+    const lightness = Math.max(0, Math.min(100, l)) / 100;
+    const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+    const huePrime = (Math.max(0, Math.min(360, h)) % 360) / 60;
+    const x = chroma * (1 - Math.abs((huePrime % 2) - 1));
+
+    let r = 0, g = 0, b = 0;
+
+    if (huePrime >= 0 && huePrime < 1) {
+        r = chroma; g = x; b = 0;
+    } else if (huePrime >= 1 && huePrime < 2) {
+        r = x; g = chroma; b = 0;
+    } else if (huePrime >= 2 && huePrime < 3) {
+        r = 0; g = chroma; b = x;
+    } else if (huePrime >= 3 && huePrime < 4) {
+        r = 0; g = x; b = chroma;
+    } else if (huePrime >= 4 && huePrime < 5) {
+        r = x; g = 0; b = chroma;
+    } else {
+        r = chroma; g = 0; b = x;
+    }
+
+    const m = lightness - chroma / 2;
+    const toHex = (value: number) => {
+        const v = Math.round((value + m) * 255);
+        return v.toString(16).padStart(2, "0");
+    };
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function hexToHue(hex: string, fallback: number): number {
+    const sanitized = hex.replace("#", "");
+    if (![3, 6].includes(sanitized.length)) {
+        return fallback;
+    }
+
+    const normalize = sanitized.length === 3
+        ? sanitized.split("").map((char) => char + char).join("")
+        : sanitized;
+
+    const bigint = parseInt(normalize, 16);
+    if (Number.isNaN(bigint)) {
+        return fallback;
+    }
+
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+
+    const rNorm = r / 255;
+    const gNorm = g / 255;
+    const bNorm = b / 255;
+
+    const max = Math.max(rNorm, gNorm, bNorm);
+    const min = Math.min(rNorm, gNorm, bNorm);
+    const delta = max - min;
+
+    if (delta === 0) {
+        return fallback;
+    }
+
+    let hue = 0;
+
+    if (max === rNorm) {
+        hue = ((gNorm - bNorm) / delta) % 6;
+    } else if (max === gNorm) {
+        hue = (bNorm - rNorm) / delta + 2;
+    } else {
+        hue = (rNorm - gNorm) / delta + 4;
+    }
+
+    const degrees = Math.round((hue * 60 + 360) % 360);
+    return degrees;
+}
 
 export default function renderMenu() {
     const $container: HTMLElement = document.createElement("div");
@@ -130,10 +208,9 @@ export default function renderMenu() {
     const $settingsCard = $menu.querySelector<HTMLElement>(".asw-settings-card");
     const $settingsIcon = $menu.querySelector<HTMLElement>(".asw-settings-icon");
     const $customPaletteCard = $menu.querySelector<HTMLElement>(".asw-custom-palette-card");
-    const $customPaletteToggle = $menu.querySelector<HTMLButtonElement>(".asw-custom-palette-toggle");
-    const $customTextColor = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-text");
-    const $customBackgroundColor = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-background");
-    const $customPaletteCheckbox = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-checkbox");
+    const $customPaletteIcon = $customPaletteCard?.querySelector<HTMLElement>(".asw-custom-palette-icon");
+    const $customPaletteTabs = Array.from($menu.querySelectorAll<HTMLButtonElement>(".asw-custom-palette-tab"));
+    const $customPaletteRange = $menu.querySelector<HTMLInputElement>(".asw-custom-palette-range");
     const $customPaletteReset = $menu.querySelector<HTMLButtonElement>(".asw-custom-palette-reset");
 
     if ($settingsIcon) {
@@ -157,102 +234,173 @@ export default function renderMenu() {
         });
     }
 
-    const hasSavedPalette = Boolean(states && typeof states['custom-palette'] === "object" && states['custom-palette'] !== null);
-    let paletteState: ICustomPaletteState = { ...DEFAULT_CUSTOM_PALETTE_STATE };
-    if (hasSavedPalette && states) {
-        paletteState = { ...paletteState, ...(states['custom-palette'] as ICustomPaletteState) };
-        userSettings.states['custom-palette'] = paletteState;
+    if ($customPaletteIcon) {
+        $customPaletteIcon.innerHTML = customPaletteIcon;
     }
 
-    const setCustomPaletteVisibility = (expanded: boolean) => {
-        if (!$customPaletteCard || !$customPaletteToggle) {
+    const paletteDefaults = DEFAULT_CUSTOM_PALETTE_STATE.colors;
+    const hueFallback: Record<CustomPaletteCategory, number> = {
+        backgrounds: 0,
+        headings: 210,
+        contents: 220
+    };
+
+    const categoryConfig: Record<CustomPaletteCategory, { saturation: number; lightness: number }> = {
+        backgrounds: { saturation: 70, lightness: 92 },
+        headings: { saturation: 85, lightness: 45 },
+        contents: { saturation: 60, lightness: 28 }
+    };
+
+    const savedPalette = states && typeof states['custom-palette'] === "object" ? (states['custom-palette'] as ICustomPaletteState) : undefined;
+
+    let paletteState: ICustomPaletteState = {
+        enabled: DEFAULT_CUSTOM_PALETTE_STATE.enabled,
+        activeCategory: DEFAULT_CUSTOM_PALETTE_STATE.activeCategory,
+        colors: { ...paletteDefaults }
+    };
+
+    if (savedPalette) {
+        paletteState = {
+            enabled: Boolean(savedPalette.enabled),
+            activeCategory: savedPalette.activeCategory ?? DEFAULT_CUSTOM_PALETTE_STATE.activeCategory,
+            colors: { ...paletteDefaults, ...(savedPalette.colors ?? {}) }
+        };
+
+        if (paletteState.enabled) {
+            userSettings.states['custom-palette'] = paletteState;
+            setSettingsVisibility(true);
+        }
+    }
+
+    const paletteHues: Record<CustomPaletteCategory, number> = {
+        backgrounds: hexToHue(paletteState.colors?.backgrounds ?? paletteDefaults.backgrounds, hueFallback.backgrounds),
+        headings: hexToHue(paletteState.colors?.headings ?? paletteDefaults.headings, hueFallback.headings),
+        contents: hexToHue(paletteState.colors?.contents ?? paletteDefaults.contents, hueFallback.contents)
+    };
+
+    const colorsMatchDefaults = () => (
+        (['backgrounds', 'headings', 'contents'] as CustomPaletteCategory[]).every((category) => {
+            const color = paletteState.colors?.[category] ?? paletteDefaults[category];
+            return color.toLowerCase() === paletteDefaults[category].toLowerCase();
+        })
+    );
+
+    const setActiveTab = (category: CustomPaletteCategory) => {
+        paletteState.activeCategory = category;
+        $customPaletteTabs.forEach((tab) => {
+            const isActive = tab.dataset.category === category;
+            tab.classList.toggle("is-active", isActive);
+            tab.setAttribute("aria-selected", String(isActive));
+        });
+    };
+
+    const createGradient = (category: CustomPaletteCategory) => {
+        const { saturation, lightness } = categoryConfig[category];
+        const stops = [0, 30, 60, 120, 180, 240, 300, 360];
+        return `linear-gradient(90deg, ${stops
+            .map((h, index) => `${hslToHex(h, saturation, lightness)} ${(index / (stops.length - 1)) * 100}%`)
+            .join(',')})`;
+    };
+
+    const updateSliderVisuals = (category: CustomPaletteCategory) => {
+        if (!$customPaletteRange) {
             return;
         }
 
-        $customPaletteToggle.setAttribute("aria-expanded", String(expanded));
-        $customPaletteCard.classList.toggle("asw-custom-palette-open", expanded);
-    };
+        const hue = paletteHues[category] ?? hueFallback[category];
+        const gradient = createGradient(category);
+        const currentColor = paletteState.colors?.[category] ?? paletteDefaults[category];
 
-    if ($customPaletteToggle) {
-        setCustomPaletteVisibility(false);
-        $customPaletteToggle.addEventListener("click", () => {
-            const expanded = $customPaletteToggle.getAttribute("aria-expanded") !== "true";
-            if (expanded) {
-                setSettingsVisibility(true);
-            }
-            setCustomPaletteVisibility(expanded);
-        });
-    }
+        $customPaletteRange.value = String(hue);
+        $customPaletteRange.style.setProperty("--asw-palette-gradient", gradient);
+        $customPaletteRange.style.setProperty("--asw-palette-thumb", currentColor);
 
-    if ($customTextColor) {
-        $customTextColor.value = paletteState.textColor;
-    }
-
-    if ($customBackgroundColor) {
-        $customBackgroundColor.value = paletteState.backgroundColor;
-    }
-
-    if ($customPaletteCheckbox) {
-        $customPaletteCheckbox.checked = Boolean(paletteState.enabled);
-    }
-
-    if (paletteState.enabled) {
-        setSettingsVisibility(true);
-        setCustomPaletteVisibility(true);
-    }
-
-    const persistPaletteState = () => {
-        const shouldRemove = !paletteState.enabled &&
-            paletteState.textColor === DEFAULT_CUSTOM_PALETTE_STATE.textColor &&
-            paletteState.backgroundColor === DEFAULT_CUSTOM_PALETTE_STATE.backgroundColor;
-
-        if (shouldRemove) {
-            delete userSettings.states['custom-palette'];
-        } else {
-            userSettings.states['custom-palette'] = paletteState;
+        const barsWrapper = $customPaletteCard?.querySelector<HTMLDivElement>(".asw-contrast-bars");
+        if (barsWrapper) {
+            const bars = Array.from(barsWrapper.querySelectorAll<HTMLSpanElement>(".asw-custom-palette-bar"));
+            bars.forEach((bar) => {
+                const cat = (bar.dataset.category as CustomPaletteCategory) || "backgrounds";
+                const colorValue = paletteState.colors?.[cat] ?? paletteDefaults[cat];
+                bar.style.background = colorValue;
+                bar.classList.toggle("is-active", cat === category);
+            });
         }
     };
 
-    const updateCustomPalette = (partial: Partial<typeof paletteState>, apply = true) => {
-        paletteState = { ...paletteState, ...partial };
-        persistPaletteState();
+    const persistPaletteState = (apply = true) => {
+        const matchesDefaults = colorsMatchDefaults();
+        paletteState.enabled = !matchesDefaults;
+
+        if (paletteState.enabled) {
+            userSettings.states['custom-palette'] = {
+                enabled: true,
+                activeCategory: paletteState.activeCategory,
+                colors: { ...paletteDefaults, ...(paletteState.colors ?? {}) }
+            };
+        } else {
+            delete userSettings.states['custom-palette'];
+        }
+
         if (apply) {
             renderTools();
         }
+
         saveUserSettings();
     };
 
-    $customTextColor?.addEventListener("input", (event) => {
-        const value = (event.target as HTMLInputElement).value || DEFAULT_CUSTOM_PALETTE_STATE.textColor;
-        updateCustomPalette({ textColor: value }, Boolean(paletteState.enabled));
+    const updatePaletteUI = () => {
+        const category = paletteState.activeCategory ?? DEFAULT_CUSTOM_PALETTE_STATE.activeCategory;
+        setActiveTab(category);
+        updateSliderVisuals(category);
+
+        if (paletteState.enabled) {
+            setSettingsVisibility(true);
+        }
+    };
+
+    $customPaletteTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            const category = (tab.dataset.category as CustomPaletteCategory) ?? DEFAULT_CUSTOM_PALETTE_STATE.activeCategory;
+            setActiveTab(category);
+            updateSliderVisuals(category);
+        });
     });
 
-    $customBackgroundColor?.addEventListener("input", (event) => {
-        const value = (event.target as HTMLInputElement).value || DEFAULT_CUSTOM_PALETTE_STATE.backgroundColor;
-        updateCustomPalette({ backgroundColor: value }, Boolean(paletteState.enabled));
-    });
+    $customPaletteRange?.addEventListener("input", (event) => {
+        const category = paletteState.activeCategory ?? DEFAULT_CUSTOM_PALETTE_STATE.activeCategory;
+        const hue = Number((event.target as HTMLInputElement).value) || 0;
+        paletteHues[category] = hue;
 
-    $customPaletteCheckbox?.addEventListener("change", (event) => {
-        const enabled = (event.target as HTMLInputElement).checked;
-        updateCustomPalette({ enabled }, true);
+        const { saturation, lightness } = categoryConfig[category];
+        const nextColor = hslToHex(hue, saturation, lightness);
+        paletteState.colors = {
+            ...paletteState.colors,
+            [category]: nextColor
+        };
+
+        paletteState.enabled = true;
+        setSettingsVisibility(true);
+
+        updateSliderVisuals(category);
+        persistPaletteState(true);
     });
 
     $customPaletteReset?.addEventListener("click", () => {
-        const defaults = { ...DEFAULT_CUSTOM_PALETTE_STATE };
-        if ($customTextColor) {
-            $customTextColor.value = defaults.textColor;
-        }
-        if ($customBackgroundColor) {
-            $customBackgroundColor.value = defaults.backgroundColor;
-        }
-        if ($customPaletteCheckbox) {
-            $customPaletteCheckbox.checked = false;
-        }
-        paletteState = defaults;
-        persistPaletteState();
-        renderTools();
-        saveUserSettings();
+        paletteState = {
+            enabled: false,
+            activeCategory: DEFAULT_CUSTOM_PALETTE_STATE.activeCategory,
+            colors: { ...paletteDefaults }
+        };
+
+        (['backgrounds', 'headings', 'contents'] as CustomPaletteCategory[]).forEach((category) => {
+            paletteHues[category] = hueFallback[category];
+        });
+
+        updatePaletteUI();
+        persistPaletteState(true);
     });
+
+    updatePaletteUI();
 
     const setPositionGridVisibility = (expanded: boolean) => {
         if (!$positionCard || !$positionToggle) {
