@@ -563,8 +563,8 @@
     left: 0;
     right: 0;
     background: #fff;
-    padding: 20px;
-    text-align: center;
+    padding: 15px 20px;
+    text-align: right;
     border-top: 2px solid #eff1f5;
 }
 

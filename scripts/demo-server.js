@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Lightweight static server for the Sienna demo page.
+ * Lightweight static server for the NextBility demo page.
  * Serves files from the repository root with index fallback to demo/index.html.
  */
 
@@ -100,6 +100,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-    console.log(`\nSienna demo available at http://${HOST}:${PORT}/`);
+    console.log(`\nNextBility demo available at http://${HOST}:${PORT}/`);
     console.log("Press Ctrl+C to stop the server.");
 });

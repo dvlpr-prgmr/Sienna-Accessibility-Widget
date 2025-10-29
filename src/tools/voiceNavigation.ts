@@ -162,7 +162,7 @@ function stopRecognition() {
 }
 
 function notifyUnsupported() {
-    console.warn("[Sienna] Voice Navigation is not supported in this browser.");
+    console.warn("[NextBility] Voice Navigation is not supported in this browser.");
 }
 
 export default function voiceNavigation(enable = false) {

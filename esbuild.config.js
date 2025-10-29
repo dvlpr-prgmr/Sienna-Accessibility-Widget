@@ -44,7 +44,7 @@ const baseConfig = {
   ],
   banner: {
     js: `/*!
- * Sienna Accessibility Widget v${packageJson.version}
+ * NextBility Accessibility Widget v${packageJson.version}
  * (c) ${new Date().getFullYear()} ${packageJson.author}
  * License: ${packageJson.license}
  * Home Page: ${packageJson.homepage}
@@ -55,9 +55,9 @@ const baseConfig = {
 
 // Build targets
 const targets = {
-  esm: { format: 'esm', outfile: 'dist/sienna-accessibility.esm.js' },
-  cjs: { format: 'cjs', outfile: 'dist/sienna-accessibility.cjs.js' },
-  umd: { format: 'iife', outfile: 'dist/sienna-accessibility.umd.js', globalName: 'SiennaAccessibility' }
+  esm: { format: 'esm', outfile: 'dist/next-bility-accessibility.esm.js' },
+  cjs: { format: 'cjs', outfile: 'dist/next-bility-accessibility.cjs.js' },
+  umd: { format: 'iife', outfile: 'dist/next-bility-accessibility.umd.js', globalName: 'NextBilityAccessibility' }
 };
 
 const buildTarget = targets[targetFormat];

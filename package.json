@@ -1,10 +1,10 @@
 {
-  "name": "sienna-accessibility",
+  "name": "next-bility",
   "version": "2.0.1",
-  "description": "Sienna: Accessibility Website Widget",
-  "main": "dist/sienna-accessibility.cjs.js",
-  "module": "dist/sienna-accessibility.esm.js",
-  "unpkg": "dist/sienna-accessibility.umd.js",
+  "description": "NextBility: Accessibility Website Widget",
+  "main": "dist/next-bility-accessibility.cjs.js",
+  "module": "dist/next-bility-accessibility.esm.js",
+  "unpkg": "dist/next-bility-accessibility.umd.js",
   "scripts": {
     "watch": "node esbuild.config.js --watch",
     "build": "node esbuild.config.js --minify",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bennyluk/Sienna-Accessibility-Widget.git"
+    "url": "git+https://github.com/chulit/NextBility.git"
   },
-  "author": "Benny Luk",
+  "author": "Chulit",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bennyluk/Sienna-Accessibility-Widget/issues"
+    "url": "https://github.com/chulit/NextBility/issues"
   },
-  "homepage": "https://accessibility-widget.pages.dev/",
+  "homepage": "https://nextbility.biz.id/",
   "devDependencies": {
     "@eslint/js": "^9.38.0",
     "esbuild": "^0.21.5",

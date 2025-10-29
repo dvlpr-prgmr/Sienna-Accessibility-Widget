@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Sienna Accessibility Widget Demo</title>
+    <title>NextBility Accessibility Widget Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -106,7 +106,7 @@
 </head>
 <body>
     <header>
-        <h1>Testing Sienna Accessibility Widget</h1>
+        <h1>Testing NextBility Accessibility Widget</h1>
         <p>
             Use this page to manually verify accessibility tools, widget placement, screen reader,
             and voice navigation behaviour. Build the project first with <code>npm run build</code>
@@ -179,10 +179,10 @@
 
     <footer>
         <strong>Tip:</strong> open the browser console if you want to call
-        <code>window.SiennaPlugin</code> helpers directly.
+        <code>window.NextBilityPlugin</code> helpers directly.
     </footer>
 
-    <script src="../dist/sienna-accessibility.umd.js"
+    <script src="../dist/next-bility-accessibility.umd.js"
             data-asw-lang="en"
             data-asw-position="bottom-right"
             data-asw-offset="24,24"
@@ -196,14 +196,14 @@
 
             const waitForPlugin = () =>
                 new Promise(resolve => {
-                    if (window.SiennaPlugin) {
-                        resolve(window.SiennaPlugin);
+                    if (window.NextBilityPlugin) {
+                        resolve(window.NextBilityPlugin);
                         return;
                     }
                     const interval = window.setInterval(() => {
-                        if (window.SiennaPlugin) {
+                        if (window.NextBilityPlugin) {
                             window.clearInterval(interval);
-                            resolve(window.SiennaPlugin);
+                            resolve(window.NextBilityPlugin);
                         }
                     }, 50);
                 });

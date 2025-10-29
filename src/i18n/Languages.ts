@@ -109,7 +109,7 @@ export async function loadLanguages(): Promise<void> {
       const dictionary = (await import(`../locales/${code}.json`)).default;
       LANGUAGE_DICTIONARY[code] = dictionary;
     } catch (error) {
-      console.warn(`[Sienna] Missing locale file for "${code}"`, error);
+      console.warn(`[NextBility] Missing locale file for "${code}"`, error);
       LANGUAGE_DICTIONARY[code] = LANGUAGE_DICTIONARY[code] || {};
     }
   }
@@ -118,7 +118,7 @@ export async function loadLanguages(): Promise<void> {
 export function registerLanguage({ code, label, dictionary, merge }: IRegisterLanguageOptions): string | undefined {
   const resolvedCode = normalizeCode(code);
   if (!resolvedCode) {
-    console.warn("[Sienna] registerLanguage requires a non-empty language code.");
+    console.warn("[NextBility] registerLanguage requires a non-empty language code.");
     return undefined;
   }
 

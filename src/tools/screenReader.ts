@@ -82,7 +82,7 @@ function handleClick(event: MouseEvent) {
 }
 
 function notifyUnsupported() {
-    console.warn("[Sienna] Screen Reader is not supported in this browser.");
+    console.warn("[NextBility] Screen Reader is not supported in this browser.");
 }
 
 export default function screenReader(enable = false) {

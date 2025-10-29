@@ -14,7 +14,7 @@ import {
 import { changeLanguage } from "./i18n/changeLanguage";
 import { IRegisterLanguageOptions, registerLanguage, resolveLanguageCode } from "./i18n/Languages";
 
-export default function sienna({
+export default function nextBility({
     options
 }) {
     const savedSettings = getSavedUserSettings() || {};
